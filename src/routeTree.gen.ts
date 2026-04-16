@@ -9,18 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StudiesRouteImport } from './routes/studies'
+import { Route as SessionRouteImport } from './routes/session'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudiesIndexRouteImport } from './routes/studies/index'
 import { Route as StudiesNewRouteImport } from './routes/studies/new'
 import { Route as StudiesStudyIdIndexRouteImport } from './routes/studies/$studyId/index'
 import { Route as StudiesStudyIdParticipantsRouteImport } from './routes/studies/$studyId/participants'
+import { Route as StudiesStudyIdEditRouteImport } from './routes/studies/$studyId/edit'
+import { Route as SessionSessionIdStartRouteImport } from './routes/session/$sessionId/start'
 import { Route as SessionSessionIdCompleteRouteImport } from './routes/session/$sessionId/complete'
 import { Route as StudiesStudyIdSessionsIndexRouteImport } from './routes/studies/$studyId/sessions/index'
 import { Route as StudiesStudyIdSessionsSessionIdRouteImport } from './routes/studies/$studyId/sessions/$sessionId'
 import { Route as SessionSessionIdPhaseBSubscaleIndexRouteImport } from './routes/session/$sessionId/phase-b/$subscaleIndex'
 import { Route as SessionSessionIdPhaseAPairIndexRouteImport } from './routes/session/$sessionId/phase-a/$pairIndex'
 
+const StudiesRoute = StudiesRouteImport.update({
+  id: '/studies',
+  path: '/studies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionRoute = SessionRouteImport.update({
+  id: '/session',
+  path: '/session',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -32,63 +46,77 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudiesIndexRoute = StudiesIndexRouteImport.update({
-  id: '/studies/',
-  path: '/studies/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudiesRoute,
 } as any)
 const StudiesNewRoute = StudiesNewRouteImport.update({
-  id: '/studies/new',
-  path: '/studies/new',
-  getParentRoute: () => rootRouteImport,
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => StudiesRoute,
 } as any)
 const StudiesStudyIdIndexRoute = StudiesStudyIdIndexRouteImport.update({
-  id: '/studies/$studyId/',
-  path: '/studies/$studyId/',
-  getParentRoute: () => rootRouteImport,
+  id: '/$studyId/',
+  path: '/$studyId/',
+  getParentRoute: () => StudiesRoute,
 } as any)
 const StudiesStudyIdParticipantsRoute =
   StudiesStudyIdParticipantsRouteImport.update({
-    id: '/studies/$studyId/participants',
-    path: '/studies/$studyId/participants',
-    getParentRoute: () => rootRouteImport,
+    id: '/$studyId/participants',
+    path: '/$studyId/participants',
+    getParentRoute: () => StudiesRoute,
   } as any)
+const StudiesStudyIdEditRoute = StudiesStudyIdEditRouteImport.update({
+  id: '/$studyId/edit',
+  path: '/$studyId/edit',
+  getParentRoute: () => StudiesRoute,
+} as any)
+const SessionSessionIdStartRoute = SessionSessionIdStartRouteImport.update({
+  id: '/$sessionId/start',
+  path: '/$sessionId/start',
+  getParentRoute: () => SessionRoute,
+} as any)
 const SessionSessionIdCompleteRoute =
   SessionSessionIdCompleteRouteImport.update({
-    id: '/session/$sessionId/complete',
-    path: '/session/$sessionId/complete',
-    getParentRoute: () => rootRouteImport,
+    id: '/$sessionId/complete',
+    path: '/$sessionId/complete',
+    getParentRoute: () => SessionRoute,
   } as any)
 const StudiesStudyIdSessionsIndexRoute =
   StudiesStudyIdSessionsIndexRouteImport.update({
-    id: '/studies/$studyId/sessions/',
-    path: '/studies/$studyId/sessions/',
-    getParentRoute: () => rootRouteImport,
+    id: '/$studyId/sessions/',
+    path: '/$studyId/sessions/',
+    getParentRoute: () => StudiesRoute,
   } as any)
 const StudiesStudyIdSessionsSessionIdRoute =
   StudiesStudyIdSessionsSessionIdRouteImport.update({
-    id: '/studies/$studyId/sessions/$sessionId',
-    path: '/studies/$studyId/sessions/$sessionId',
-    getParentRoute: () => rootRouteImport,
+    id: '/$studyId/sessions/$sessionId',
+    path: '/$studyId/sessions/$sessionId',
+    getParentRoute: () => StudiesRoute,
   } as any)
 const SessionSessionIdPhaseBSubscaleIndexRoute =
   SessionSessionIdPhaseBSubscaleIndexRouteImport.update({
-    id: '/session/$sessionId/phase-b/$subscaleIndex',
-    path: '/session/$sessionId/phase-b/$subscaleIndex',
-    getParentRoute: () => rootRouteImport,
+    id: '/$sessionId/phase-b/$subscaleIndex',
+    path: '/$sessionId/phase-b/$subscaleIndex',
+    getParentRoute: () => SessionRoute,
   } as any)
 const SessionSessionIdPhaseAPairIndexRoute =
   SessionSessionIdPhaseAPairIndexRouteImport.update({
-    id: '/session/$sessionId/phase-a/$pairIndex',
-    path: '/session/$sessionId/phase-a/$pairIndex',
-    getParentRoute: () => rootRouteImport,
+    id: '/$sessionId/phase-a/$pairIndex',
+    path: '/$sessionId/phase-a/$pairIndex',
+    getParentRoute: () => SessionRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/session': typeof SessionRouteWithChildren
+  '/studies': typeof StudiesRouteWithChildren
   '/studies/new': typeof StudiesNewRoute
   '/studies/': typeof StudiesIndexRoute
   '/session/$sessionId/complete': typeof SessionSessionIdCompleteRoute
+  '/session/$sessionId/start': typeof SessionSessionIdStartRoute
+  '/studies/$studyId/edit': typeof StudiesStudyIdEditRoute
   '/studies/$studyId/participants': typeof StudiesStudyIdParticipantsRoute
   '/studies/$studyId/': typeof StudiesStudyIdIndexRoute
   '/session/$sessionId/phase-a/$pairIndex': typeof SessionSessionIdPhaseAPairIndexRoute
@@ -99,9 +127,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/session': typeof SessionRouteWithChildren
   '/studies/new': typeof StudiesNewRoute
   '/studies': typeof StudiesIndexRoute
   '/session/$sessionId/complete': typeof SessionSessionIdCompleteRoute
+  '/session/$sessionId/start': typeof SessionSessionIdStartRoute
+  '/studies/$studyId/edit': typeof StudiesStudyIdEditRoute
   '/studies/$studyId/participants': typeof StudiesStudyIdParticipantsRoute
   '/studies/$studyId': typeof StudiesStudyIdIndexRoute
   '/session/$sessionId/phase-a/$pairIndex': typeof SessionSessionIdPhaseAPairIndexRoute
@@ -113,9 +144,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/session': typeof SessionRouteWithChildren
+  '/studies': typeof StudiesRouteWithChildren
   '/studies/new': typeof StudiesNewRoute
   '/studies/': typeof StudiesIndexRoute
   '/session/$sessionId/complete': typeof SessionSessionIdCompleteRoute
+  '/session/$sessionId/start': typeof SessionSessionIdStartRoute
+  '/studies/$studyId/edit': typeof StudiesStudyIdEditRoute
   '/studies/$studyId/participants': typeof StudiesStudyIdParticipantsRoute
   '/studies/$studyId/': typeof StudiesStudyIdIndexRoute
   '/session/$sessionId/phase-a/$pairIndex': typeof SessionSessionIdPhaseAPairIndexRoute
@@ -128,9 +163,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/session'
+    | '/studies'
     | '/studies/new'
     | '/studies/'
     | '/session/$sessionId/complete'
+    | '/session/$sessionId/start'
+    | '/studies/$studyId/edit'
     | '/studies/$studyId/participants'
     | '/studies/$studyId/'
     | '/session/$sessionId/phase-a/$pairIndex'
@@ -141,9 +180,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/session'
     | '/studies/new'
     | '/studies'
     | '/session/$sessionId/complete'
+    | '/session/$sessionId/start'
+    | '/studies/$studyId/edit'
     | '/studies/$studyId/participants'
     | '/studies/$studyId'
     | '/session/$sessionId/phase-a/$pairIndex'
@@ -154,9 +196,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/session'
+    | '/studies'
     | '/studies/new'
     | '/studies/'
     | '/session/$sessionId/complete'
+    | '/session/$sessionId/start'
+    | '/studies/$studyId/edit'
     | '/studies/$studyId/participants'
     | '/studies/$studyId/'
     | '/session/$sessionId/phase-a/$pairIndex'
@@ -168,19 +214,26 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  StudiesNewRoute: typeof StudiesNewRoute
-  StudiesIndexRoute: typeof StudiesIndexRoute
-  SessionSessionIdCompleteRoute: typeof SessionSessionIdCompleteRoute
-  StudiesStudyIdParticipantsRoute: typeof StudiesStudyIdParticipantsRoute
-  StudiesStudyIdIndexRoute: typeof StudiesStudyIdIndexRoute
-  SessionSessionIdPhaseAPairIndexRoute: typeof SessionSessionIdPhaseAPairIndexRoute
-  SessionSessionIdPhaseBSubscaleIndexRoute: typeof SessionSessionIdPhaseBSubscaleIndexRoute
-  StudiesStudyIdSessionsSessionIdRoute: typeof StudiesStudyIdSessionsSessionIdRoute
-  StudiesStudyIdSessionsIndexRoute: typeof StudiesStudyIdSessionsIndexRoute
+  SessionRoute: typeof SessionRouteWithChildren
+  StudiesRoute: typeof StudiesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/studies': {
+      id: '/studies'
+      path: '/studies'
+      fullPath: '/studies'
+      preLoaderRoute: typeof StudiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session': {
+      id: '/session'
+      path: '/session'
+      fullPath: '/session'
+      preLoaderRoute: typeof SessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -197,83 +250,130 @@ declare module '@tanstack/react-router' {
     }
     '/studies/': {
       id: '/studies/'
-      path: '/studies'
+      path: '/'
       fullPath: '/studies/'
       preLoaderRoute: typeof StudiesIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudiesRoute
     }
     '/studies/new': {
       id: '/studies/new'
-      path: '/studies/new'
+      path: '/new'
       fullPath: '/studies/new'
       preLoaderRoute: typeof StudiesNewRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudiesRoute
     }
     '/studies/$studyId/': {
       id: '/studies/$studyId/'
-      path: '/studies/$studyId'
+      path: '/$studyId'
       fullPath: '/studies/$studyId/'
       preLoaderRoute: typeof StudiesStudyIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudiesRoute
     }
     '/studies/$studyId/participants': {
       id: '/studies/$studyId/participants'
-      path: '/studies/$studyId/participants'
+      path: '/$studyId/participants'
       fullPath: '/studies/$studyId/participants'
       preLoaderRoute: typeof StudiesStudyIdParticipantsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudiesRoute
+    }
+    '/studies/$studyId/edit': {
+      id: '/studies/$studyId/edit'
+      path: '/$studyId/edit'
+      fullPath: '/studies/$studyId/edit'
+      preLoaderRoute: typeof StudiesStudyIdEditRouteImport
+      parentRoute: typeof StudiesRoute
+    }
+    '/session/$sessionId/start': {
+      id: '/session/$sessionId/start'
+      path: '/$sessionId/start'
+      fullPath: '/session/$sessionId/start'
+      preLoaderRoute: typeof SessionSessionIdStartRouteImport
+      parentRoute: typeof SessionRoute
     }
     '/session/$sessionId/complete': {
       id: '/session/$sessionId/complete'
-      path: '/session/$sessionId/complete'
+      path: '/$sessionId/complete'
       fullPath: '/session/$sessionId/complete'
       preLoaderRoute: typeof SessionSessionIdCompleteRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SessionRoute
     }
     '/studies/$studyId/sessions/': {
       id: '/studies/$studyId/sessions/'
-      path: '/studies/$studyId/sessions'
+      path: '/$studyId/sessions'
       fullPath: '/studies/$studyId/sessions/'
       preLoaderRoute: typeof StudiesStudyIdSessionsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudiesRoute
     }
     '/studies/$studyId/sessions/$sessionId': {
       id: '/studies/$studyId/sessions/$sessionId'
-      path: '/studies/$studyId/sessions/$sessionId'
+      path: '/$studyId/sessions/$sessionId'
       fullPath: '/studies/$studyId/sessions/$sessionId'
       preLoaderRoute: typeof StudiesStudyIdSessionsSessionIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudiesRoute
     }
     '/session/$sessionId/phase-b/$subscaleIndex': {
       id: '/session/$sessionId/phase-b/$subscaleIndex'
-      path: '/session/$sessionId/phase-b/$subscaleIndex'
+      path: '/$sessionId/phase-b/$subscaleIndex'
       fullPath: '/session/$sessionId/phase-b/$subscaleIndex'
       preLoaderRoute: typeof SessionSessionIdPhaseBSubscaleIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SessionRoute
     }
     '/session/$sessionId/phase-a/$pairIndex': {
       id: '/session/$sessionId/phase-a/$pairIndex'
-      path: '/session/$sessionId/phase-a/$pairIndex'
+      path: '/$sessionId/phase-a/$pairIndex'
       fullPath: '/session/$sessionId/phase-a/$pairIndex'
       preLoaderRoute: typeof SessionSessionIdPhaseAPairIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SessionRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  StudiesNewRoute: StudiesNewRoute,
-  StudiesIndexRoute: StudiesIndexRoute,
+interface SessionRouteChildren {
+  SessionSessionIdCompleteRoute: typeof SessionSessionIdCompleteRoute
+  SessionSessionIdStartRoute: typeof SessionSessionIdStartRoute
+  SessionSessionIdPhaseAPairIndexRoute: typeof SessionSessionIdPhaseAPairIndexRoute
+  SessionSessionIdPhaseBSubscaleIndexRoute: typeof SessionSessionIdPhaseBSubscaleIndexRoute
+}
+
+const SessionRouteChildren: SessionRouteChildren = {
   SessionSessionIdCompleteRoute: SessionSessionIdCompleteRoute,
-  StudiesStudyIdParticipantsRoute: StudiesStudyIdParticipantsRoute,
-  StudiesStudyIdIndexRoute: StudiesStudyIdIndexRoute,
+  SessionSessionIdStartRoute: SessionSessionIdStartRoute,
   SessionSessionIdPhaseAPairIndexRoute: SessionSessionIdPhaseAPairIndexRoute,
   SessionSessionIdPhaseBSubscaleIndexRoute:
     SessionSessionIdPhaseBSubscaleIndexRoute,
+}
+
+const SessionRouteWithChildren =
+  SessionRoute._addFileChildren(SessionRouteChildren)
+
+interface StudiesRouteChildren {
+  StudiesNewRoute: typeof StudiesNewRoute
+  StudiesIndexRoute: typeof StudiesIndexRoute
+  StudiesStudyIdEditRoute: typeof StudiesStudyIdEditRoute
+  StudiesStudyIdParticipantsRoute: typeof StudiesStudyIdParticipantsRoute
+  StudiesStudyIdIndexRoute: typeof StudiesStudyIdIndexRoute
+  StudiesStudyIdSessionsSessionIdRoute: typeof StudiesStudyIdSessionsSessionIdRoute
+  StudiesStudyIdSessionsIndexRoute: typeof StudiesStudyIdSessionsIndexRoute
+}
+
+const StudiesRouteChildren: StudiesRouteChildren = {
+  StudiesNewRoute: StudiesNewRoute,
+  StudiesIndexRoute: StudiesIndexRoute,
+  StudiesStudyIdEditRoute: StudiesStudyIdEditRoute,
+  StudiesStudyIdParticipantsRoute: StudiesStudyIdParticipantsRoute,
+  StudiesStudyIdIndexRoute: StudiesStudyIdIndexRoute,
   StudiesStudyIdSessionsSessionIdRoute: StudiesStudyIdSessionsSessionIdRoute,
   StudiesStudyIdSessionsIndexRoute: StudiesStudyIdSessionsIndexRoute,
+}
+
+const StudiesRouteWithChildren =
+  StudiesRoute._addFileChildren(StudiesRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  SessionRoute: SessionRouteWithChildren,
+  StudiesRoute: StudiesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

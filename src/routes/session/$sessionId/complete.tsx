@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router'
+import { createFileRoute, notFound } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { getSession } from '#/server/sessions'
@@ -6,7 +6,6 @@ import { getSessionScore, completeSession } from '#/server/scores'
 import { getSubscaleRatings } from '#/server/ratings'
 import { getPairwiseComparisons } from '#/server/pairwise'
 import { SUBSCALE_CODES, SUBSCALE_META } from '#/lib/tlx-constants'
-import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Textarea } from '#/components/ui/textarea'
 import { Label } from '#/components/ui/label'
@@ -187,15 +186,9 @@ function CompleteComponent() {
         </CardContent>
       </Card>
 
-      {/* Done button */}
-      <Button asChild className="w-full min-h-[44px]">
-        <Link
-          to="/studies/$studyId/sessions"
-          params={{ studyId: session.studyId }}
-        >
-          {t('session.complete.done')}
-        </Link>
-      </Button>
+      <p className="text-sm text-muted-foreground text-center">
+        Your responses have been recorded. You may close this window.
+      </p>
     </main>
   )
 }
