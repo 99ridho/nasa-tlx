@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { sessions, participants, tlxScores, subscaleRatings } from '#/db/schema'
 
-interface ExportRow {
+type ExportRow = {
   session_id: string
   participant_code: string
   completed_at: string
@@ -23,7 +23,7 @@ interface ExportRow {
   rating_op: string
   rating_ef: string
   rating_fr: string
-}
+} & Record<string, string>
 
 export const getStudySessionsExport = createServerFn()
   .inputValidator((d: { studyId: string }) => d)
@@ -82,7 +82,7 @@ export const getStudySessionsExport = createServerFn()
     return rows
   })
 
-export function generateCSV(rows: Record<string, unknown>[]): string {
+export function generateCSV(rows: ExportRow[]): string {
   if (rows.length === 0) return ''
 
   const headers = Object.keys(rows[0])

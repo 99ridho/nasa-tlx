@@ -49,7 +49,7 @@ export const Route = createFileRoute('/session/$sessionId/complete')({
 })
 
 function CompleteComponent() {
-  const { session, score, ratings, comparisons } = Route.useLoaderData()
+  const { session, score, ratings } = Route.useLoaderData()
   const { t } = useTranslation()
   const [notes, setNotes] = useState(session.notes ?? '')
 

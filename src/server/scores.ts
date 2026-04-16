@@ -1,6 +1,6 @@
 'use server'
 import { createServerFn } from '@tanstack/react-start'
-import { eq, count } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { db } from '#/db/index'
 import {
   sessions,
