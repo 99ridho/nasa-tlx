@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import {
   shuffleArray,
   snapSliderValue,
@@ -7,8 +7,13 @@ import {
   computeRawTLX,
   CANONICAL_PAIRS,
   SUBSCALE_CODES,
+  SUBSCALE_META,
 } from './tlx'
 import type { SubscaleCode } from '#/types/domain'
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 describe('shuffleArray', () => {
   it('returns a new array with the same elements', () => {
@@ -35,6 +40,16 @@ describe('shuffleArray', () => {
     for (const item of original) {
       expect(shuffled).toContain(item)
     }
+  })
+
+  it('actually rearranges elements (kills loop-skipping mutations)', () => {
+    // Mock Math.random to always return 0 → swap each element with index 0
+    // For a 3-element array [A,B,C] this produces [C,B,A] which is != original
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+    const original = ['A', 'B', 'C']
+    const shuffled = shuffleArray(original)
+    // With Math.random()=0: i=2→j=0 swap→[C,B,A]; i=1→j=0 swap→[B,C,A]
+    expect(shuffled).not.toEqual(original)
   })
 })
 
@@ -301,6 +316,225 @@ describe('full session pipeline — realistic stub data', () => {
     expect(computeWeightedTLX(weights, ratings)).toBeGreaterThan(
       computeRawTLX(ratings),
     )
+  })
+})
+
+describe('mutation-catching', () => {
+  describe('computeWeightedTLX', () => {
+    it('zero-weight subscale with nonzero rating contributes nothing (* vs +)', () => {
+      // MD weight=0, rating=100 → 0*100=0, NOT 0+100=100
+      // PD weight=15, rating=0  → 15*0=0
+      // Total = 0/15 = 0
+      // If * → +: (0+100 + 15+0 + ...) / 15 ≠ 0
+      const weights: Record<SubscaleCode, number> = {
+        MD: 0,
+        PD: 15,
+        TD: 0,
+        OP: 0,
+        EF: 0,
+        FR: 0,
+      }
+      const ratings: Record<SubscaleCode, number> = {
+        MD: 100,
+        PD: 0,
+        TD: 0,
+        OP: 0,
+        EF: 0,
+        FR: 0,
+      }
+      expect(computeWeightedTLX(weights, ratings)).toBe(0)
+    })
+
+    it('divisor is exactly 15, not 14 or 16', () => {
+      // sum = 30 (e.g. weights all equal rating=2 each)
+      // 30/15 = 2; 30/14 ≈ 2.14; 30/16 ≈ 1.875
+      const weights: Record<SubscaleCode, number> = {
+        MD: 1,
+        PD: 2,
+        TD: 3,
+        OP: 4,
+        EF: 3,
+        FR: 2,
+      }
+      const ratings: Record<SubscaleCode, number> = {
+        MD: 2,
+        PD: 2,
+        TD: 2,
+        OP: 2,
+        EF: 2,
+        FR: 2,
+      }
+      // sum = (1+2+3+4+3+2)*2 = 15*2 = 30; 30/15 = 2
+      expect(computeWeightedTLX(weights, ratings)).toBe(2)
+    })
+
+    it('accumulator adds (not subtracts) each product', () => {
+      // If acc - term were used, result would be negative with positive inputs
+      const weights: Record<SubscaleCode, number> = {
+        MD: 5,
+        PD: 5,
+        TD: 5,
+        OP: 0,
+        EF: 0,
+        FR: 0,
+      }
+      const ratings: Record<SubscaleCode, number> = {
+        MD: 10,
+        PD: 10,
+        TD: 10,
+        OP: 0,
+        EF: 0,
+        FR: 0,
+      }
+      // (5*10 + 5*10 + 5*10) / 15 = 150/15 = 10
+      expect(computeWeightedTLX(weights, ratings)).toBe(10)
+      expect(computeWeightedTLX(weights, ratings)).toBeGreaterThan(0)
+    })
+  })
+
+  describe('computeRawTLX', () => {
+    it('divisor is exactly 6, not 5 or 7', () => {
+      // ratings: MD=42, rest=0 → 42/6=7; 42/5=8.4; 42/7=6
+      const ratings: Record<SubscaleCode, number> = {
+        MD: 42,
+        PD: 0,
+        TD: 0,
+        OP: 0,
+        EF: 0,
+        FR: 0,
+      }
+      expect(computeRawTLX(ratings)).toBe(7)
+    })
+
+    it('all six subscales are included in the sum', () => {
+      // Five subscales at 50, FR at 30: (50*5+30)/6 = 280/6 ≈ 46.67
+      // If FR were skipped: 250/5 = 50
+      const ratings: Record<SubscaleCode, number> = {
+        MD: 50,
+        PD: 50,
+        TD: 50,
+        OP: 50,
+        EF: 50,
+        FR: 30,
+      }
+      expect(computeRawTLX(ratings)).toBeCloseTo(46.6667, 3)
+    })
+
+    it('accumulator adds (not subtracts) each rating', () => {
+      const ratings: Record<SubscaleCode, number> = {
+        MD: 60,
+        PD: 60,
+        TD: 60,
+        OP: 60,
+        EF: 60,
+        FR: 60,
+      }
+      expect(computeRawTLX(ratings)).toBe(60)
+      expect(computeRawTLX(ratings)).toBeGreaterThan(0)
+    })
+  })
+
+  describe('snapSliderValue', () => {
+    it('divisor is 5, not 10 (input 4: round(4/5)=1→×5=5, but round(4/10)=0→×5=0)', () => {
+      expect(snapSliderValue(4)).toBe(5)
+    })
+
+    it('multiplier is 5, not 4 (input 7: round(7/5)=1→×5=5, but ×4=4)', () => {
+      expect(snapSliderValue(7)).toBe(5)
+    })
+
+    it('snaps 6 to 5 (Math.round, not Math.ceil: ceil(6/5)=2→10)', () => {
+      expect(snapSliderValue(6)).toBe(5)
+    })
+
+    it('snaps 3 to 5 (Math.round, not Math.floor: floor(3/5)=0→0)', () => {
+      expect(snapSliderValue(3)).toBe(5)
+    })
+  })
+
+  describe('computeWeights', () => {
+    it('increments (not decrements) the selected subscale', () => {
+      // All 15 comparisons select MD → MD weight must be 15, not -15
+      const comparisons: Array<{ selected: SubscaleCode }> = Array(15).fill({
+        selected: 'MD',
+      })
+      const weights = computeWeights(comparisons)
+      expect(weights.MD).toBe(15)
+      expect(weights.MD).toBeGreaterThan(0)
+    })
+  })
+})
+
+describe('SUBSCALE_META', () => {
+  it('contains all six subscale codes as keys', () => {
+    expect(Object.keys(SUBSCALE_META)).toEqual(
+      expect.arrayContaining(['MD', 'PD', 'TD', 'OP', 'EF', 'FR']),
+    )
+    expect(Object.keys(SUBSCALE_META)).toHaveLength(6)
+  })
+
+  it('each entry has a code field matching its key', () => {
+    for (const code of SUBSCALE_CODES) {
+      expect(SUBSCALE_META[code].code).toBe(code)
+    }
+  })
+
+  it('MD has correct i18n keys', () => {
+    expect(SUBSCALE_META.MD.nameKey).toBe('subscale.MD.name')
+    expect(SUBSCALE_META.MD.descriptionKey).toBe('subscale.MD.description')
+    expect(SUBSCALE_META.MD.leftEndpointKey).toBe('subscale.MD.left')
+    expect(SUBSCALE_META.MD.rightEndpointKey).toBe('subscale.MD.right')
+  })
+
+  it('PD has correct i18n keys', () => {
+    expect(SUBSCALE_META.PD.nameKey).toBe('subscale.PD.name')
+    expect(SUBSCALE_META.PD.descriptionKey).toBe('subscale.PD.description')
+    expect(SUBSCALE_META.PD.leftEndpointKey).toBe('subscale.PD.left')
+    expect(SUBSCALE_META.PD.rightEndpointKey).toBe('subscale.PD.right')
+  })
+
+  it('TD has correct i18n keys', () => {
+    expect(SUBSCALE_META.TD.nameKey).toBe('subscale.TD.name')
+    expect(SUBSCALE_META.TD.descriptionKey).toBe('subscale.TD.description')
+    expect(SUBSCALE_META.TD.leftEndpointKey).toBe('subscale.TD.left')
+    expect(SUBSCALE_META.TD.rightEndpointKey).toBe('subscale.TD.right')
+  })
+
+  it('OP has correct i18n keys (reversed semantics: left=Good, right=Poor)', () => {
+    expect(SUBSCALE_META.OP.nameKey).toBe('subscale.OP.name')
+    expect(SUBSCALE_META.OP.descriptionKey).toBe('subscale.OP.description')
+    expect(SUBSCALE_META.OP.leftEndpointKey).toBe('subscale.OP.left')
+    expect(SUBSCALE_META.OP.rightEndpointKey).toBe('subscale.OP.right')
+  })
+
+  it('EF has correct i18n keys', () => {
+    expect(SUBSCALE_META.EF.nameKey).toBe('subscale.EF.name')
+    expect(SUBSCALE_META.EF.descriptionKey).toBe('subscale.EF.description')
+    expect(SUBSCALE_META.EF.leftEndpointKey).toBe('subscale.EF.left')
+    expect(SUBSCALE_META.EF.rightEndpointKey).toBe('subscale.EF.right')
+  })
+
+  it('FR has correct i18n keys', () => {
+    expect(SUBSCALE_META.FR.nameKey).toBe('subscale.FR.name')
+    expect(SUBSCALE_META.FR.descriptionKey).toBe('subscale.FR.description')
+    expect(SUBSCALE_META.FR.leftEndpointKey).toBe('subscale.FR.left')
+    expect(SUBSCALE_META.FR.rightEndpointKey).toBe('subscale.FR.right')
+  })
+
+  it('each entry has all required fields (kills ObjectLiteral → {} mutations)', () => {
+    const requiredFields = [
+      'code',
+      'nameKey',
+      'descriptionKey',
+      'leftEndpointKey',
+      'rightEndpointKey',
+    ]
+    for (const code of SUBSCALE_CODES) {
+      for (const field of requiredFields) {
+        expect(SUBSCALE_META[code]).toHaveProperty(field)
+        expect(SUBSCALE_META[code][field as keyof (typeof SUBSCALE_META)[typeof code]]).not.toBe('')
+      }
+    }
   })
 })
 
