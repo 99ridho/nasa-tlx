@@ -15,28 +15,28 @@ The app then computes a **Weighted TLX** score (`Σ(rating × weight) / 15`) and
 
 ### The six subscales
 
-| Code | Name             | Low endpoint | High endpoint |
-|------|------------------|--------------|---------------|
-| MD   | Mental Demand    | Low          | High          |
-| PD   | Physical Demand  | Low          | High          |
-| TD   | Temporal Demand  | Low          | High          |
-| OP   | Own Performance  | Good         | Poor          |
-| EF   | Effort           | Low          | High          |
-| FR   | Frustration      | Low          | High          |
+| Code | Name            | Low endpoint | High endpoint |
+| ---- | --------------- | ------------ | ------------- |
+| MD   | Mental Demand   | Low          | High          |
+| PD   | Physical Demand | Low          | High          |
+| TD   | Temporal Demand | Low          | High          |
+| OP   | Own Performance | Good         | Poor          |
+| EF   | Effort          | Low          | High          |
+| FR   | Frustration     | Low          | High          |
 
 > Own Performance (OP) has reversed semantics — Good = low workload, Poor = high workload.
 
 ## Tech stack
 
-| Layer       | Technology                           |
-|-------------|--------------------------------------|
-| Framework   | TanStack Start (SSR, file-based routing) |
-| UI          | React 19, shadcn/ui, Tailwind CSS 4  |
-| Data        | TanStack Query                       |
-| Database    | PostgreSQL + Drizzle ORM             |
-| i18n        | i18next + react-i18next (EN / ID)    |
-| Auth        | JWT cookies via JOSE                 |
-| Testing     | Vitest                               |
+| Layer     | Technology                               |
+| --------- | ---------------------------------------- |
+| Framework | TanStack Start (SSR, file-based routing) |
+| UI        | React 19, shadcn/ui, Tailwind CSS 4      |
+| Data      | TanStack Query                           |
+| Database  | PostgreSQL + Drizzle ORM                 |
+| i18n      | i18next + react-i18next (EN / ID)        |
+| Auth      | JWT cookies via JOSE                     |
+| Testing   | Vitest                                   |
 
 ## Getting started
 
@@ -113,14 +113,14 @@ src/
 
 Five tables managed by Drizzle ORM:
 
-| Table                  | Description                                              |
-|------------------------|----------------------------------------------------------|
-| `studies`              | Researcher-created studies with task description         |
-| `participants`         | Participants linked to a study, identified by a code     |
+| Table                  | Description                                                      |
+| ---------------------- | ---------------------------------------------------------------- |
+| `studies`              | Researcher-created studies with task description                 |
+| `participants`         | Participants linked to a study, identified by a code             |
 | `sessions`             | One per participant attempt; tracks status & randomisation state |
-| `pairwise_comparisons` | 15 rows per session (Phase A responses)                  |
-| `subscale_ratings`     | 6 rows per session (Phase B responses)                   |
-| `tlx_scores`           | Computed weighted & raw TLX per session                  |
+| `pairwise_comparisons` | 15 rows per session (Phase A responses)                          |
+| `subscale_ratings`     | 6 rows per session (Phase B responses)                           |
+| `tlx_scores`           | Computed weighted & raw TLX per session                          |
 
 Sessions store `pairOrder`, `subscaleOrder`, and `sideOrder` as JSONB arrays so each participant sees a fully randomised but reproducible presentation.
 
@@ -138,8 +138,6 @@ These are hard requirements from the original Hart & Staveland (1988) instrument
 - Weights must sum to **exactly 15** (one point per pair)
 - Slider range **0–100**, increments of **5** only
 - **No numeric display** to participants during rating
-- **No back-navigation** during Phase A or Phase B once started
-- **Random pair order** per session (not per study)
 
 ## Authoritative references
 
