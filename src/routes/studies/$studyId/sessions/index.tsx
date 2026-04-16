@@ -6,10 +6,12 @@ import {
 } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
+import { Download } from 'lucide-react'
 import { getStudyById } from '#/server/studies'
 import { getParticipants } from '#/server/participants'
 import { getSessionsByStudy, createBatchSessions } from '#/server/sessions'
 import { getStudyResults } from '#/server/results'
+import { generateCSV } from '#/server/export'
 import { Button } from '#/components/ui/button'
 import { Badge } from '#/components/ui/badge'
 import { Checkbox } from '#/components/ui/checkbox'
@@ -163,6 +165,24 @@ function SessionsComponent() {
     navigator.clipboard.writeText(text)
   }
 
+  function handleExportParticipantList() {
+    const rows = sessions.map((s) => ({
+      participant_code: s.participant.participantCode,
+      session_url: `${window.location.origin}/session/${s.id}/start`,
+      status: s.status,
+      collection_mode: s.collectionMode,
+      started_at: new Date(s.startedAt).toISOString(),
+    }))
+    const csv = generateCSV(rows)
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `study-${study.id}-participants.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <main className="page-wrap px-4 pb-8 pt-8 max-w-5xl mx-auto">
       <div className="flex items-center gap-3 mb-4">
@@ -200,7 +220,17 @@ function SessionsComponent() {
         </div>
       )}
 
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end gap-2 mb-4">
+        {sessions.length > 0 && (
+          <Button
+            variant="outline"
+            onClick={handleExportParticipantList}
+            className="min-h-11 gap-2"
+          >
+            <Download className="h-4 w-4" />
+            {t('session.exportParticipantList')}
+          </Button>
+        )}
         <Button onClick={() => setDialogOpen(true)} className="min-h-11">
           {t('session.batchCreate')}
         </Button>
@@ -267,7 +297,7 @@ function SessionsComponent() {
           if (!open) closeDialog()
         }}
       >
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {batchResults
@@ -383,7 +413,7 @@ function SessionsComponent() {
                     <span className="text-sm font-mono font-medium w-24 shrink-0">
                       {r.participantCode}
                     </span>
-                    <span className="text-xs text-muted-foreground flex-1 truncate">
+                    <span className="text-xs text-muted-foreground flex-1 break-all">
                       {window.location.origin}/session/{r.sessionId}/start
                     </span>
                     <Button

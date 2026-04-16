@@ -100,7 +100,8 @@
     "noEligible": "Semua peserta sudah memiliki sesi aktif.",
     "sessionLinks": "Tautan Sesi",
     "copyLink": "Salin",
-    "copyAll": "Salin semua"
+    "copyAll": "Salin semua",
+    "exportParticipantList": "Ekspor Daftar Peserta"
   },
   "study": {
     "create": "Buat Studi",

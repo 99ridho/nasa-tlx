@@ -82,7 +82,7 @@ export const getStudySessionsExport = createServerFn()
     return rows
   })
 
-export function generateCSV(rows: ExportRow[]): string {
+export function generateCSV(rows: Record<string, string>[]): string {
   if (rows.length === 0) return ''
 
   const headers = Object.keys(rows[0])

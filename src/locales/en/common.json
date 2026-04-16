@@ -100,7 +100,8 @@
     "noEligible": "All participants already have active sessions.",
     "sessionLinks": "Session Links",
     "copyLink": "Copy",
-    "copyAll": "Copy all"
+    "copyAll": "Copy all",
+    "exportParticipantList": "Export Participant List"
   },
   "study": {
     "create": "Create Study",
