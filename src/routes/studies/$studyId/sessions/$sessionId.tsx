@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
 import { getSession } from '#/server/sessions'
 import { getPairwiseComparisons } from '#/server/pairwise'
 import { getSubscaleRatings } from '#/server/ratings'
@@ -38,6 +39,20 @@ export const Route = createFileRoute('/studies/$studyId/sessions/$sessionId')({
 function SessionDetailComponent() {
   const { session, comparisons, ratings, score } = Route.useLoaderData()
   const { t } = useTranslation()
+  const [copied, setCopied] = useState(false)
+
+  const startUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}/session/${session.id}/start`
+      : null
+
+  function copyUrl() {
+    if (!startUrl) return
+    navigator.clipboard.writeText(startUrl).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   const weights: Record<SubscaleCode, number> = score
     ? {
@@ -100,6 +115,24 @@ function SessionDetailComponent() {
               <p className="text-muted-foreground">
                 {new Date(session.completedAt).toLocaleString()}
               </p>
+            </div>
+          )}
+          {session.status === 'in_progress' && startUrl && (
+            <div className="col-span-2">
+              <p className="font-medium mb-1">Participant Link</p>
+              <div className="flex items-center gap-2">
+                <p className="font-mono text-xs text-muted-foreground truncate flex-1">
+                  {startUrl}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={copyUrl}
+                  className="shrink-0"
+                >
+                  {copied ? 'Copied!' : t('session.copyLink')}
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
