@@ -61,7 +61,10 @@ export const getStudySessionsExport = createServerFn()
         participant_code: p.participantCode,
         completed_at: s.completedAt ? s.completedAt.toISOString() : '',
         collection_mode: s.collectionMode,
-        weighted_tlx: score?.weightedTlx !== null && score?.weightedTlx !== undefined ? String(score.weightedTlx) : '',
+        weighted_tlx:
+          score?.weightedTlx !== null && score?.weightedTlx !== undefined
+            ? String(score.weightedTlx)
+            : '',
         raw_tlx: score?.rawTlx !== undefined ? String(score.rawTlx) : '',
         weight_md: score?.weightMd !== undefined ? String(score.weightMd) : '',
         weight_pd: score?.weightPd !== undefined ? String(score.weightPd) : '',
@@ -99,7 +102,7 @@ export function generateCSV(rows: Record<string, unknown>[]): string {
         }
         return str
       })
-      .join(',')
+      .join(','),
   )
 
   return [headerRow, ...dataRows].join('\n')

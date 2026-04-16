@@ -3,21 +3,31 @@ import { createServerFn } from '@tanstack/react-start'
 import { desc, eq } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { studies } from '#/db/schema'
-import type { CreateStudyInput, Study, UpdateStudyInput, ValidationError } from '#/types/domain'
+import type {
+  CreateStudyInput,
+  Study,
+  UpdateStudyInput,
+  ValidationError,
+} from '#/types/domain'
 import { validateCreateStudy, validateUpdateStudy } from './validation'
 
-export const getStudies = createServerFn().handler(async (): Promise<Study[]> => {
-  const rows = await db.select().from(studies).orderBy(desc(studies.createdAt))
-  return rows.map((r) => ({
-    id: r.id,
-    name: r.name,
-    taskLabel: r.taskLabel,
-    description: r.description ?? null,
-    createdBy: r.createdBy,
-    createdAt: r.createdAt,
-    updatedAt: r.updatedAt,
-  }))
-})
+export const getStudies = createServerFn().handler(
+  async (): Promise<Study[]> => {
+    const rows = await db
+      .select()
+      .from(studies)
+      .orderBy(desc(studies.createdAt))
+    return rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      taskLabel: r.taskLabel,
+      description: r.description ?? null,
+      createdBy: r.createdBy,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+    }))
+  },
+)
 
 export const createStudy = createServerFn()
   .inputValidator((d: CreateStudyInput) => d)
@@ -78,8 +88,10 @@ export const updateStudy = createServerFn()
       updatedAt: new Date(),
     }
     if (data.input.name !== undefined) updates.name = data.input.name.trim()
-    if (data.input.taskLabel !== undefined) updates.taskLabel = data.input.taskLabel.trim()
-    if (data.input.description !== undefined) updates.description = data.input.description.trim()
+    if (data.input.taskLabel !== undefined)
+      updates.taskLabel = data.input.taskLabel.trim()
+    if (data.input.description !== undefined)
+      updates.description = data.input.description.trim()
 
     const [row] = await db
       .update(studies)

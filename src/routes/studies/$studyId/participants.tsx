@@ -1,7 +1,16 @@
-import { createFileRoute, Link, useRouter, notFound } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  useRouter,
+  notFound,
+} from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-import { getParticipants, addParticipant, deleteParticipant } from '#/server/participants'
+import {
+  getParticipants,
+  addParticipant,
+  deleteParticipant,
+} from '#/server/participants'
 import { getStudyById } from '#/server/studies'
 import { Button } from '#/components/ui/button'
 import { Input } from '#/components/ui/input'
@@ -34,7 +43,8 @@ function ParticipantsComponent() {
   const { t } = useTranslation()
   const router = useRouter()
 
-  const [participants, setParticipants] = useState<Participant[]>(initialParticipants)
+  const [participants, setParticipants] =
+    useState<Participant[]>(initialParticipants)
   const [newCode, setNewCode] = useState('')
   const [addError, setAddError] = useState<string | null>(null)
   const [isAdding, setIsAdding] = useState(false)
@@ -80,15 +90,21 @@ function ParticipantsComponent() {
     <main className="page-wrap px-4 pb-8 pt-8 max-w-4xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <Button asChild variant="outline" className="min-h-[44px]">
-          <Link to="/studies/$studyId" params={{ studyId: study.id }}>{t('common.back')}</Link>
+          <Link to="/studies/$studyId" params={{ studyId: study.id }}>
+            {t('common.back')}
+          </Link>
         </Button>
         <h1 className="text-2xl font-bold">{t('study.participants')}</h1>
-        <Badge variant="secondary" className="ml-auto">{study.name}</Badge>
+        <Badge variant="secondary" className="ml-auto">
+          {study.name}
+        </Badge>
       </div>
 
       <form onSubmit={handleAdd} className="flex gap-2 mb-6" noValidate>
         <div className="flex-1 space-y-1">
-          <Label htmlFor="participant-code" className="sr-only">{t('participant.code')}</Label>
+          <Label htmlFor="participant-code" className="sr-only">
+            {t('participant.code')}
+          </Label>
           <Input
             id="participant-code"
             value={newCode}
@@ -101,16 +117,24 @@ function ParticipantsComponent() {
             className="min-h-[44px]"
           />
           {addError && (
-            <p id="add-error" className="text-sm text-destructive">{addError}</p>
+            <p id="add-error" className="text-sm text-destructive">
+              {addError}
+            </p>
           )}
         </div>
-        <Button type="submit" disabled={isAdding} className="min-h-[44px] self-start">
+        <Button
+          type="submit"
+          disabled={isAdding}
+          className="min-h-[44px] self-start"
+        >
           {isAdding ? t('common.loading') : t('participant.add')}
         </Button>
       </form>
 
       {participants.length === 0 ? (
-        <p className="text-center text-muted-foreground py-8">{t('participant.noParticipants')}</p>
+        <p className="text-center text-muted-foreground py-8">
+          {t('participant.noParticipants')}
+        </p>
       ) : (
         <Table>
           <TableHeader>

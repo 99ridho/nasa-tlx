@@ -94,7 +94,9 @@ function PhaseAComponent() {
           />
         </div>
 
-        <p className="text-base font-medium text-center">{t('phaseA.instruction')}</p>
+        <p className="text-base font-medium text-center">
+          {t('phaseA.instruction')}
+        </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SubscaleComparisonCard

@@ -49,12 +49,15 @@ function NewStudyComponent() {
 
       if (Array.isArray(result)) {
         const fieldErrors: Record<string, string> = {}
-        for (const err of result as ValidationError[]) {
+        for (const err of result) {
           fieldErrors[err.field] = err.message
         }
         setErrors(fieldErrors)
       } else {
-        await navigate({ to: '/studies/$studyId', params: { studyId: result.id } })
+        await navigate({
+          to: '/studies/$studyId',
+          params: { studyId: result.id },
+        })
       }
     } finally {
       setIsSubmitting(false)
@@ -80,7 +83,9 @@ function NewStudyComponent() {
                 className="min-h-[44px]"
               />
               {errors.name && (
-                <p id="name-error" className="text-sm text-destructive">{errors.name}</p>
+                <p id="name-error" className="text-sm text-destructive">
+                  {errors.name}
+                </p>
               )}
             </div>
 
@@ -91,11 +96,15 @@ function NewStudyComponent() {
                 value={taskLabel}
                 onChange={(e) => setTaskLabel(e.target.value)}
                 placeholder={t('study.taskLabelPlaceholder')}
-                aria-describedby={errors.taskLabel ? 'taskLabel-error' : undefined}
+                aria-describedby={
+                  errors.taskLabel ? 'taskLabel-error' : undefined
+                }
                 className="min-h-[44px]"
               />
               {errors.taskLabel && (
-                <p id="taskLabel-error" className="text-sm text-destructive">{errors.taskLabel}</p>
+                <p id="taskLabel-error" className="text-sm text-destructive">
+                  {errors.taskLabel}
+                </p>
               )}
             </div>
 
@@ -117,16 +126,24 @@ function NewStudyComponent() {
                 value={createdBy}
                 onChange={(e) => setCreatedBy(e.target.value)}
                 placeholder={t('study.createdByPlaceholder')}
-                aria-describedby={errors.createdBy ? 'createdBy-error' : undefined}
+                aria-describedby={
+                  errors.createdBy ? 'createdBy-error' : undefined
+                }
                 className="min-h-[44px]"
               />
               {errors.createdBy && (
-                <p id="createdBy-error" className="text-sm text-destructive">{errors.createdBy}</p>
+                <p id="createdBy-error" className="text-sm text-destructive">
+                  {errors.createdBy}
+                </p>
               )}
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Button type="submit" disabled={isSubmitting} className="min-h-[44px]">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="min-h-[44px]"
+              >
                 {isSubmitting ? t('common.loading') : t('common.save')}
               </Button>
               <Button asChild variant="outline" className="min-h-[44px]">

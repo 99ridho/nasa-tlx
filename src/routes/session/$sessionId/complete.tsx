@@ -27,7 +27,9 @@ export const Route = createFileRoute('/session/$sessionId/complete')({
     if (!session) throw notFound()
 
     // Attempt to complete the session if it's still in_progress
-    let score: TLXScore | null = await getSessionScore({ data: { sessionId: params.sessionId } })
+    let score: TLXScore | null = await getSessionScore({
+      data: { sessionId: params.sessionId },
+    })
 
     if (!score && session.status === 'in_progress') {
       try {
@@ -54,7 +56,7 @@ function CompleteComponent() {
 
   // Build lookup maps
   const ratingsBySubscale = Object.fromEntries(
-    ratings.map((r) => [r.subscale, r.rawValue])
+    ratings.map((r) => [r.subscale, r.rawValue]),
   ) as Record<SubscaleCode, number>
 
   const weights: Record<SubscaleCode, number> = score
@@ -70,22 +72,30 @@ function CompleteComponent() {
 
   return (
     <main className="px-4 pb-8 pt-8 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">{t('session.complete.title')}</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        {t('session.complete.title')}
+      </h1>
 
       {/* TLX Scores */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {score?.weightedTlx !== null && score?.weightedTlx !== undefined && (
           <Card>
             <CardContent className="pt-6 text-center">
-              <p className="text-sm text-muted-foreground mb-1">{t('session.complete.weightedTLX')}</p>
-              <p className="text-4xl font-bold">{score.weightedTlx.toFixed(1)}</p>
+              <p className="text-sm text-muted-foreground mb-1">
+                {t('session.complete.weightedTLX')}
+              </p>
+              <p className="text-4xl font-bold">
+                {score.weightedTlx.toFixed(1)}
+              </p>
             </CardContent>
           </Card>
         )}
         {score && (
           <Card>
             <CardContent className="pt-6 text-center">
-              <p className="text-sm text-muted-foreground mb-1">{t('session.complete.rawTLX')}</p>
+              <p className="text-sm text-muted-foreground mb-1">
+                {t('session.complete.rawTLX')}
+              </p>
               <p className="text-4xl font-bold">{score.rawTlx.toFixed(1)}</p>
             </CardContent>
           </Card>
@@ -99,7 +109,9 @@ function CompleteComponent() {
         <>
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="text-base">{t('session.complete.weightProfile')}</CardTitle>
+              <CardTitle className="text-base">
+                {t('session.complete.weightProfile')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -113,7 +125,9 @@ function CompleteComponent() {
                   {SUBSCALE_CODES.map((code) => (
                     <TableRow key={code}>
                       <TableCell>{t(SUBSCALE_META[code].nameKey)}</TableCell>
-                      <TableCell className="text-right font-mono">{weights[code]}</TableCell>
+                      <TableCell className="text-right font-mono">
+                        {weights[code]}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -126,7 +140,9 @@ function CompleteComponent() {
       {/* Subscale Ratings */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-base">{t('session.complete.ratingSummary')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('session.complete.ratingSummary')}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -153,10 +169,14 @@ function CompleteComponent() {
       {/* Researcher Notes */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-base">{t('session.complete.notes')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('session.complete.notes')}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <Label htmlFor="session-notes" className="sr-only">{t('session.complete.notes')}</Label>
+          <Label htmlFor="session-notes" className="sr-only">
+            {t('session.complete.notes')}
+          </Label>
           <Textarea
             id="session-notes"
             value={notes}

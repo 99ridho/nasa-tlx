@@ -82,11 +82,20 @@ describe('computeWeights', () => {
   it('weight sum equals 15', () => {
     // Each subscale appears in 5 pairs, simulate real pairwise selections
     const comparisons: Array<{ selected: SubscaleCode }> = [
-      { selected: 'MD' }, { selected: 'MD' }, { selected: 'MD' },
-      { selected: 'PD' }, { selected: 'PD' }, { selected: 'PD' },
-      { selected: 'TD' }, { selected: 'TD' }, { selected: 'TD' },
-      { selected: 'OP' }, { selected: 'OP' }, { selected: 'OP' },
-      { selected: 'EF' }, { selected: 'EF' },
+      { selected: 'MD' },
+      { selected: 'MD' },
+      { selected: 'MD' },
+      { selected: 'PD' },
+      { selected: 'PD' },
+      { selected: 'PD' },
+      { selected: 'TD' },
+      { selected: 'TD' },
+      { selected: 'TD' },
+      { selected: 'OP' },
+      { selected: 'OP' },
+      { selected: 'OP' },
+      { selected: 'EF' },
+      { selected: 'EF' },
       { selected: 'FR' },
     ]
 
@@ -96,7 +105,9 @@ describe('computeWeights', () => {
   })
 
   it('returns zero for unselected subscales', () => {
-    const comparisons: Array<{ selected: SubscaleCode }> = Array(15).fill({ selected: 'MD' })
+    const comparisons: Array<{ selected: SubscaleCode }> = Array(15).fill({
+      selected: 'MD',
+    })
     const weights = computeWeights(comparisons)
     expect(weights.MD).toBe(15)
     expect(weights.PD).toBe(0)
@@ -111,11 +122,21 @@ describe('computeWeightedTLX', () => {
   it('computes weighted TLX correctly', () => {
     // weights: MD=5, PD=3, TD=2, OP=2, EF=2, FR=1 → sum=15
     const weights: Record<SubscaleCode, number> = {
-      MD: 5, PD: 3, TD: 2, OP: 2, EF: 2, FR: 1,
+      MD: 5,
+      PD: 3,
+      TD: 2,
+      OP: 2,
+      EF: 2,
+      FR: 1,
     }
     // ratings: all 50
     const ratings: Record<SubscaleCode, number> = {
-      MD: 50, PD: 50, TD: 50, OP: 50, EF: 50, FR: 50,
+      MD: 50,
+      PD: 50,
+      TD: 50,
+      OP: 50,
+      EF: 50,
+      FR: 50,
     }
     // Σ(50 * w) / 15 = 50 * (5+3+2+2+2+1) / 15 = 50 * 15 / 15 = 50
     expect(computeWeightedTLX(weights, ratings)).toBe(50)
@@ -123,10 +144,20 @@ describe('computeWeightedTLX', () => {
 
   it('computes weighted TLX with varied weights and ratings', () => {
     const weights: Record<SubscaleCode, number> = {
-      MD: 5, PD: 4, TD: 3, OP: 2, EF: 1, FR: 0,
+      MD: 5,
+      PD: 4,
+      TD: 3,
+      OP: 2,
+      EF: 1,
+      FR: 0,
     }
     const ratings: Record<SubscaleCode, number> = {
-      MD: 80, PD: 60, TD: 40, OP: 20, EF: 10, FR: 0,
+      MD: 80,
+      PD: 60,
+      TD: 40,
+      OP: 20,
+      EF: 10,
+      FR: 0,
     }
     // (80*5 + 60*4 + 40*3 + 20*2 + 10*1 + 0*0) / 15
     // = (400 + 240 + 120 + 40 + 10 + 0) / 15
@@ -139,7 +170,12 @@ describe('computeWeightedTLX', () => {
 describe('computeRawTLX', () => {
   it('computes mean of all 6 subscale ratings', () => {
     const ratings: Record<SubscaleCode, number> = {
-      MD: 60, PD: 40, TD: 80, OP: 20, EF: 50, FR: 30,
+      MD: 60,
+      PD: 40,
+      TD: 80,
+      OP: 20,
+      EF: 50,
+      FR: 30,
     }
     // (60 + 40 + 80 + 20 + 50 + 30) / 6 = 280 / 6 ≈ 46.666...
     expect(computeRawTLX(ratings)).toBeCloseTo(46.6667, 3)
@@ -147,14 +183,24 @@ describe('computeRawTLX', () => {
 
   it('returns 0 for all-zero ratings', () => {
     const ratings: Record<SubscaleCode, number> = {
-      MD: 0, PD: 0, TD: 0, OP: 0, EF: 0, FR: 0,
+      MD: 0,
+      PD: 0,
+      TD: 0,
+      OP: 0,
+      EF: 0,
+      FR: 0,
     }
     expect(computeRawTLX(ratings)).toBe(0)
   })
 
   it('returns 100 for all-100 ratings', () => {
     const ratings: Record<SubscaleCode, number> = {
-      MD: 100, PD: 100, TD: 100, OP: 100, EF: 100, FR: 100,
+      MD: 100,
+      PD: 100,
+      TD: 100,
+      OP: 100,
+      EF: 100,
+      FR: 100,
     }
     expect(computeRawTLX(ratings)).toBe(100)
   })

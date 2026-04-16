@@ -84,12 +84,8 @@
           "name": "pairwise_comparisons_session_id_sessions_id_fk",
           "tableFrom": "pairwise_comparisons",
           "tableTo": "sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -164,12 +160,8 @@
           "name": "participants_study_id_studies_id_fk",
           "tableFrom": "participants",
           "tableTo": "studies",
-          "columnsFrom": [
-            "study_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["study_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -276,12 +268,8 @@
           "name": "sessions_study_id_studies_id_fk",
           "tableFrom": "sessions",
           "tableTo": "studies",
-          "columnsFrom": [
-            "study_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["study_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -289,12 +277,8 @@
           "name": "sessions_participant_id_participants_id_fk",
           "tableFrom": "sessions",
           "tableTo": "participants",
-          "columnsFrom": [
-            "participant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["participant_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -435,12 +419,8 @@
           "name": "subscale_ratings_session_id_sessions_id_fk",
           "tableFrom": "subscale_ratings",
           "tableTo": "sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -535,12 +515,8 @@
           "name": "tlx_scores_session_id_sessions_id_fk",
           "tableFrom": "tlx_scores",
           "tableTo": "sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -550,9 +526,7 @@
         "tlx_scores_session_id_unique": {
           "name": "tlx_scores_session_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "session_id"
-          ]
+          "columns": ["session_id"]
         }
       },
       "policies": {},
@@ -564,39 +538,22 @@
     "public.collection_mode": {
       "name": "collection_mode",
       "schema": "public",
-      "values": [
-        "weighted",
-        "raw_only"
-      ]
+      "values": ["weighted", "raw_only"]
     },
     "public.phase_order": {
       "name": "phase_order",
       "schema": "public",
-      "values": [
-        "comparisons_first",
-        "ratings_first"
-      ]
+      "values": ["comparisons_first", "ratings_first"]
     },
     "public.session_status": {
       "name": "session_status",
       "schema": "public",
-      "values": [
-        "in_progress",
-        "completed",
-        "abandoned"
-      ]
+      "values": ["in_progress", "completed", "abandoned"]
     },
     "public.subscale_code": {
       "name": "subscale_code",
       "schema": "public",
-      "values": [
-        "MD",
-        "PD",
-        "TD",
-        "OP",
-        "EF",
-        "FR"
-      ]
+      "values": ["MD", "PD", "TD", "OP", "EF", "FR"]
     }
   },
   "schemas": {},

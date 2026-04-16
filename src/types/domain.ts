@@ -37,9 +37,9 @@ export interface Session {
   collectionMode: CollectionMode
   phaseOrder: PhaseOrder
   status: SessionStatus
-  pairOrder: number[]       // 15 indices into CANONICAL_PAIRS
-  subscaleOrder: SubscaleCode[]  // 6 subscale codes in randomized order
-  sideOrder: boolean[]      // 15 booleans: true = a is left, false = b is left
+  pairOrder: number[] // 15 indices into CANONICAL_PAIRS
+  subscaleOrder: SubscaleCode[] // 6 subscale codes in randomized order
+  sideOrder: boolean[] // 15 booleans: true = a is left, false = b is left
   startedAt: Date
   completedAt: Date | null
   notes: string | null

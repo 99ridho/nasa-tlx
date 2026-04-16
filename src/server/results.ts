@@ -30,10 +30,8 @@ export const getStudyResults = createServerFn()
       .where(eq(sessions.studyId, data.studyId))
 
     // Per-subscale rating averages and stddev
-    const subscaleStats: Record<SubscaleCode, { mean: number; sd: number }> = {} as Record<
-      SubscaleCode,
-      { mean: number; sd: number }
-    >
+    const subscaleStats: Record<SubscaleCode, { mean: number; sd: number }> =
+      {} as Record<SubscaleCode, { mean: number; sd: number }>
 
     for (const code of SUBSCALE_CODES) {
       const [statResult] = await db
@@ -46,8 +44,14 @@ export const getStudyResults = createServerFn()
         .where(eq(sessions.studyId, data.studyId))
 
       subscaleStats[code] = {
-        mean: statResult?.mean !== null && statResult?.mean !== undefined ? Number(statResult.mean) : 0,
-        sd: statResult?.sd !== null && statResult?.sd !== undefined ? Number(statResult.sd) : 0,
+        mean:
+          statResult?.mean !== null && statResult?.mean !== undefined
+            ? Number(statResult.mean)
+            : 0,
+        sd:
+          statResult?.sd !== null && statResult?.sd !== undefined
+            ? Number(statResult.sd)
+            : 0,
       }
     }
 
@@ -55,11 +59,13 @@ export const getStudyResults = createServerFn()
       studyId: data.studyId,
       sessionCount,
       meanWeightedTlx:
-        aggResult?.meanWeightedTlx !== null && aggResult?.meanWeightedTlx !== undefined
+        aggResult?.meanWeightedTlx !== null &&
+        aggResult?.meanWeightedTlx !== undefined
           ? Number(aggResult.meanWeightedTlx)
           : null,
       sdWeightedTlx:
-        aggResult?.sdWeightedTlx !== null && aggResult?.sdWeightedTlx !== undefined
+        aggResult?.sdWeightedTlx !== null &&
+        aggResult?.sdWeightedTlx !== undefined
           ? Number(aggResult.sdWeightedTlx)
           : null,
       meanRawTlx:

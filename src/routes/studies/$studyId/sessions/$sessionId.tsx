@@ -72,7 +72,9 @@ function SessionDetailComponent() {
         <CardContent className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="font-medium">{t('participant.code')}</p>
-            <p className="font-mono text-muted-foreground">{session.participant.participantCode}</p>
+            <p className="font-mono text-muted-foreground">
+              {session.participant.participantCode}
+            </p>
           </div>
           <div>
             <p className="font-medium">Status</p>
@@ -88,12 +90,16 @@ function SessionDetailComponent() {
           </div>
           <div>
             <p className="font-medium">Started</p>
-            <p className="text-muted-foreground">{new Date(session.startedAt).toLocaleString()}</p>
+            <p className="text-muted-foreground">
+              {new Date(session.startedAt).toLocaleString()}
+            </p>
           </div>
           {session.completedAt && (
             <div>
               <p className="font-medium">Completed</p>
-              <p className="text-muted-foreground">{new Date(session.completedAt).toLocaleString()}</p>
+              <p className="text-muted-foreground">
+                {new Date(session.completedAt).toLocaleString()}
+              </p>
             </div>
           )}
         </CardContent>
@@ -108,13 +114,21 @@ function SessionDetailComponent() {
           <CardContent className="grid grid-cols-2 gap-4">
             {score.weightedTlx !== null && (
               <div className="text-center p-4 rounded-lg bg-muted">
-                <p className="text-sm text-muted-foreground">{t('session.complete.weightedTLX')}</p>
-                <p className="text-3xl font-bold mt-1">{score.weightedTlx.toFixed(1)}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('session.complete.weightedTLX')}
+                </p>
+                <p className="text-3xl font-bold mt-1">
+                  {score.weightedTlx.toFixed(1)}
+                </p>
               </div>
             )}
             <div className="text-center p-4 rounded-lg bg-muted">
-              <p className="text-sm text-muted-foreground">{t('session.complete.rawTLX')}</p>
-              <p className="text-3xl font-bold mt-1">{score.rawTlx.toFixed(1)}</p>
+              <p className="text-sm text-muted-foreground">
+                {t('session.complete.rawTLX')}
+              </p>
+              <p className="text-3xl font-bold mt-1">
+                {score.rawTlx.toFixed(1)}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -125,7 +139,9 @@ function SessionDetailComponent() {
         {session.collectionMode === 'weighted' && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t('session.complete.weightProfile')}</CardTitle>
+              <CardTitle className="text-base">
+                {t('session.complete.weightProfile')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
@@ -139,7 +155,9 @@ function SessionDetailComponent() {
                   {SUBSCALE_CODES.map((code) => (
                     <TableRow key={code}>
                       <TableCell>{t(SUBSCALE_META[code].nameKey)}</TableCell>
-                      <TableCell className="text-right font-mono">{weights[code]}</TableCell>
+                      <TableCell className="text-right font-mono">
+                        {weights[code]}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -151,7 +169,9 @@ function SessionDetailComponent() {
         {/* Ratings */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">{t('session.complete.ratingSummary')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('session.complete.ratingSummary')}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -164,8 +184,12 @@ function SessionDetailComponent() {
               <TableBody>
                 {ratings.map((r) => (
                   <TableRow key={r.id}>
-                    <TableCell>{t(SUBSCALE_META[r.subscale].nameKey)}</TableCell>
-                    <TableCell className="text-right font-mono">{r.rawValue}</TableCell>
+                    <TableCell>
+                      {t(SUBSCALE_META[r.subscale].nameKey)}
+                    </TableCell>
+                    <TableCell className="text-right font-mono">
+                      {r.rawValue}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -180,7 +204,9 @@ function SessionDetailComponent() {
       {comparisons.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Pairwise Comparisons (Phase A)</CardTitle>
+            <CardTitle className="text-base">
+              Pairwise Comparisons (Phase A)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -198,10 +224,18 @@ function SessionDetailComponent() {
                   {comparisons.map((c, i) => (
                     <TableRow key={c.id}>
                       <TableCell>{i + 1}</TableCell>
-                      <TableCell>{t(SUBSCALE_META[c.subscaleA].nameKey)}</TableCell>
-                      <TableCell>{t(SUBSCALE_META[c.subscaleB].nameKey)}</TableCell>
                       <TableCell>
-                        <Badge variant={c.selected === c.subscaleA ? 'default' : 'secondary'}>
+                        {t(SUBSCALE_META[c.subscaleA].nameKey)}
+                      </TableCell>
+                      <TableCell>
+                        {t(SUBSCALE_META[c.subscaleB].nameKey)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            c.selected === c.subscaleA ? 'default' : 'secondary'
+                          }
+                        >
                           {t(SUBSCALE_META[c.selected].nameKey)}
                         </Badge>
                       </TableCell>

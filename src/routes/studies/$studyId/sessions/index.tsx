@@ -1,4 +1,9 @@
-import { createFileRoute, Link, useNavigate, notFound } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  notFound,
+} from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { getStudyById } from '#/server/studies'
@@ -46,8 +51,15 @@ export const Route = createFileRoute('/studies/$studyId/sessions/')({
   component: SessionsComponent,
 })
 
-function SessionStatusBadge({ status }: { status: SessionWithRelations['status'] }) {
-  const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+function SessionStatusBadge({
+  status,
+}: {
+  status: SessionWithRelations['status']
+}) {
+  const variants: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline'
+  > = {
     completed: 'default',
     in_progress: 'secondary',
     abandoned: 'destructive',
@@ -62,7 +74,8 @@ function SessionsComponent() {
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedParticipantId, setSelectedParticipantId] = useState<string>('')
-  const [collectionMode, setCollectionMode] = useState<CollectionMode>('weighted')
+  const [collectionMode, setCollectionMode] =
+    useState<CollectionMode>('weighted')
   const [isStarting, setIsStarting] = useState(false)
   const [startError, setStartError] = useState<string | null>(null)
 
@@ -103,16 +116,22 @@ function SessionsComponent() {
     <main className="page-wrap px-4 pb-8 pt-8 max-w-5xl mx-auto">
       <div className="flex items-center gap-3 mb-4">
         <Button asChild variant="outline" className="min-h-[44px]">
-          <Link to="/studies/$studyId" params={{ studyId: study.id }}>{t('common.back')}</Link>
+          <Link to="/studies/$studyId" params={{ studyId: study.id }}>
+            {t('common.back')}
+          </Link>
         </Button>
         <h1 className="text-2xl font-bold">{t('study.sessions')}</h1>
-        <Badge variant="secondary" className="ml-auto">{study.name}</Badge>
+        <Badge variant="secondary" className="ml-auto">
+          {study.name}
+        </Badge>
       </div>
 
       {results.sessionCount > 0 && (
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="rounded-lg border p-4">
-            <p className="text-sm text-muted-foreground">{t('session.complete.weightedTLX')}</p>
+            <p className="text-sm text-muted-foreground">
+              {t('session.complete.weightedTLX')}
+            </p>
             <p className="text-2xl font-bold mt-1">
               {results.meanWeightedTlx !== null
                 ? `${results.meanWeightedTlx.toFixed(1)} ± ${(results.sdWeightedTlx ?? 0).toFixed(1)}`
@@ -120,7 +139,9 @@ function SessionsComponent() {
             </p>
           </div>
           <div className="rounded-lg border p-4">
-            <p className="text-sm text-muted-foreground">{t('session.complete.rawTLX')}</p>
+            <p className="text-sm text-muted-foreground">
+              {t('session.complete.rawTLX')}
+            </p>
             <p className="text-2xl font-bold mt-1">
               {results.meanRawTlx.toFixed(1)} ± {results.sdRawTlx.toFixed(1)}
             </p>
@@ -135,7 +156,9 @@ function SessionsComponent() {
       </div>
 
       {sessions.length === 0 ? (
-        <p className="text-center text-muted-foreground py-8">No sessions yet.</p>
+        <p className="text-center text-muted-foreground py-8">
+          No sessions yet.
+        </p>
       ) : (
         <div className="overflow-x-auto">
           <Table>
@@ -153,8 +176,12 @@ function SessionsComponent() {
             <TableBody>
               {sessions.map((session) => (
                 <TableRow key={session.id}>
-                  <TableCell className="font-mono">{session.participant.participantCode}</TableCell>
-                  <TableCell><SessionStatusBadge status={session.status} /></TableCell>
+                  <TableCell className="font-mono">
+                    {session.participant.participantCode}
+                  </TableCell>
+                  <TableCell>
+                    <SessionStatusBadge status={session.status} />
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline">{session.collectionMode}</Badge>
                   </TableCell>
@@ -166,7 +193,12 @@ function SessionsComponent() {
                       : '—'}
                   </TableCell>
                   <TableCell>
-                    <Button asChild variant="ghost" size="sm" className="min-h-[44px]">
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="sm"
+                      className="min-h-[44px]"
+                    >
                       <Link
                         to="/studies/$studyId/sessions/$sessionId"
                         params={{ studyId: study.id, sessionId: session.id }}
@@ -190,7 +222,10 @@ function SessionsComponent() {
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
               <Label htmlFor="participant-select">Participant</Label>
-              <Select value={selectedParticipantId} onValueChange={setSelectedParticipantId}>
+              <Select
+                value={selectedParticipantId}
+                onValueChange={setSelectedParticipantId}
+              >
                 <SelectTrigger id="participant-select" className="min-h-[44px]">
                   <SelectValue placeholder="Select participant..." />
                 </SelectTrigger>
@@ -209,7 +244,9 @@ function SessionsComponent() {
               <div className="flex gap-2">
                 <Button
                   type="button"
-                  variant={collectionMode === 'weighted' ? 'default' : 'outline'}
+                  variant={
+                    collectionMode === 'weighted' ? 'default' : 'outline'
+                  }
                   onClick={() => setCollectionMode('weighted')}
                   className="min-h-[44px] flex-1"
                 >
@@ -217,7 +254,9 @@ function SessionsComponent() {
                 </Button>
                 <Button
                   type="button"
-                  variant={collectionMode === 'raw_only' ? 'default' : 'outline'}
+                  variant={
+                    collectionMode === 'raw_only' ? 'default' : 'outline'
+                  }
                   onClick={() => setCollectionMode('raw_only')}
                   className="min-h-[44px] flex-1"
                 >
@@ -231,10 +270,18 @@ function SessionsComponent() {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)} className="min-h-[44px]">
+            <Button
+              variant="outline"
+              onClick={() => setDialogOpen(false)}
+              className="min-h-[44px]"
+            >
               {t('common.cancel')}
             </Button>
-            <Button onClick={handleStartSession} disabled={isStarting} className="min-h-[44px]">
+            <Button
+              onClick={handleStartSession}
+              disabled={isStarting}
+              className="min-h-[44px]"
+            >
               {isStarting ? t('common.loading') : 'Start'}
             </Button>
           </DialogFooter>

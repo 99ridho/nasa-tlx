@@ -10,8 +10,12 @@ export function usePairwiseMutation(sessionId: string) {
     mutationFn: (input: SubmitPairwiseInput) =>
       submitPairwiseComparison({ data: input }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sessions.pairwise(sessionId) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.sessions.detail(sessionId) })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.sessions.pairwise(sessionId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.sessions.detail(sessionId),
+      })
     },
   })
 }

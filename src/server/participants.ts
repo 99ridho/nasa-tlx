@@ -3,7 +3,11 @@ import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { participants } from '#/db/schema'
-import type { AddParticipantInput, ConflictError, Participant } from '#/types/domain'
+import type {
+  AddParticipantInput,
+  ConflictError,
+  Participant,
+} from '#/types/domain'
 import { validateAddParticipant } from './validation'
 
 export const getParticipants = createServerFn()

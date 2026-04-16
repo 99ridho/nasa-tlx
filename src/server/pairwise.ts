@@ -3,7 +3,11 @@ import { createServerFn } from '@tanstack/react-start'
 import { eq, count } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { pairwiseComparisons, sessions } from '#/db/schema'
-import type { PairwiseComparison, SubmitPairwiseInput, SubscaleCode } from '#/types/domain'
+import type {
+  PairwiseComparison,
+  SubmitPairwiseInput,
+  SubscaleCode,
+} from '#/types/domain'
 import { CANONICAL_PAIRS } from '#/lib/tlx-constants'
 
 export const submitPairwiseComparison = createServerFn()
@@ -32,7 +36,7 @@ export const submitPairwiseComparison = createServerFn()
     const pair = CANONICAL_PAIRS[data.pairIndex]
     if (data.selected !== pair.a && data.selected !== pair.b) {
       throw new Error(
-        `selected "${data.selected}" is not part of pair ${data.pairIndex} (${pair.a} vs ${pair.b})`
+        `selected "${data.selected}" is not part of pair ${data.pairIndex} (${pair.a} vs ${pair.b})`,
       )
     }
 
@@ -47,7 +51,9 @@ export const submitPairwiseComparison = createServerFn()
     } catch (err: unknown) {
       const error = err as { code?: string }
       if (error.code === '23505') {
-        throw new Error(`Pair ${data.pairIndex} has already been submitted for this session`)
+        throw new Error(
+          `Pair ${data.pairIndex} has already been submitted for this session`,
+        )
       }
       throw err
     }

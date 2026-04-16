@@ -1,6 +1,13 @@
 import type { SubscaleCode, SubscaleMeta, SubscalePair } from '#/types/domain'
 
-export const SUBSCALE_CODES: SubscaleCode[] = ['MD', 'PD', 'TD', 'OP', 'EF', 'FR']
+export const SUBSCALE_CODES: SubscaleCode[] = [
+  'MD',
+  'PD',
+  'TD',
+  'OP',
+  'EF',
+  'FR',
+]
 
 // All C(6,2) = 15 pairs in canonical order
 export const CANONICAL_PAIRS: SubscalePair[] = [
@@ -47,7 +54,7 @@ export const SUBSCALE_META: Record<SubscaleCode, SubscaleMeta> = {
     code: 'OP',
     nameKey: 'subscale.OP.name',
     descriptionKey: 'subscale.OP.description',
-    leftEndpointKey: 'subscale.OP.left',   // "Good" = low workload
+    leftEndpointKey: 'subscale.OP.left', // "Good" = low workload
     rightEndpointKey: 'subscale.OP.right', // "Poor" = high workload
   },
   EF: {
@@ -86,10 +93,15 @@ export function snapSliderValue(position: number): number {
  *  Weight sum invariant: must equal 15.
  */
 export function computeWeights(
-  comparisons: Array<{ selected: SubscaleCode }>
+  comparisons: Array<{ selected: SubscaleCode }>,
 ): Record<SubscaleCode, number> {
   const weights: Record<SubscaleCode, number> = {
-    MD: 0, PD: 0, TD: 0, OP: 0, EF: 0, FR: 0,
+    MD: 0,
+    PD: 0,
+    TD: 0,
+    OP: 0,
+    EF: 0,
+    FR: 0,
   }
   for (const c of comparisons) {
     weights[c.selected]++
@@ -100,11 +112,11 @@ export function computeWeights(
 /** Weighted TLX: Σ(rating[i] × weight[i]) / 15 */
 export function computeWeightedTLX(
   weights: Record<SubscaleCode, number>,
-  ratings: Record<SubscaleCode, number>
+  ratings: Record<SubscaleCode, number>,
 ): number {
   const sum = SUBSCALE_CODES.reduce(
     (acc, code) => acc + ratings[code] * weights[code],
-    0
+    0,
   )
   return sum / 15
 }

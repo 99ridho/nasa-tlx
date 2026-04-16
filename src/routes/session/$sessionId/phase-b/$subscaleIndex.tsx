@@ -10,7 +10,9 @@ import { TLXSlider } from '#/components/TLXSlider'
 import { Button } from '#/components/ui/button'
 import { useRatingMutation } from '#/hooks/useRatingMutation'
 
-export const Route = createFileRoute('/session/$sessionId/phase-b/$subscaleIndex')({
+export const Route = createFileRoute(
+  '/session/$sessionId/phase-b/$subscaleIndex',
+)({
   loader: async ({ params }) => {
     const subscaleIdx = parseInt(params.subscaleIndex, 10)
     if (isNaN(subscaleIdx) || subscaleIdx < 0 || subscaleIdx > 5) {
@@ -104,7 +106,10 @@ function PhaseBComponent() {
         />
 
         {!hasInteracted && (
-          <p className="text-sm text-muted-foreground text-center" aria-live="polite">
+          <p
+            className="text-sm text-muted-foreground text-center"
+            aria-live="polite"
+          >
             {t('phaseB.notSet')}
           </p>
         )}

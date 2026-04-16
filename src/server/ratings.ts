@@ -3,7 +3,11 @@ import { createServerFn } from '@tanstack/react-start'
 import { eq, and } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { subscaleRatings } from '#/db/schema'
-import type { SubscaleRating, SubmitRatingInput, SubscaleCode } from '#/types/domain'
+import type {
+  SubscaleRating,
+  SubmitRatingInput,
+  SubscaleCode,
+} from '#/types/domain'
 import { snapSliderValue } from '#/lib/tlx-constants'
 
 export const submitSubscaleRating = createServerFn()
@@ -18,8 +22,8 @@ export const submitSubscaleRating = createServerFn()
       .where(
         and(
           eq(subscaleRatings.sessionId, data.sessionId),
-          eq(subscaleRatings.subscale, data.subscale)
-        )
+          eq(subscaleRatings.subscale, data.subscale),
+        ),
       )
       .limit(1)
 

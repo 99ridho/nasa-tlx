@@ -11,13 +11,13 @@ When in doubt about instrument behavior, defer to the PDF. When in doubt about f
 
 ## Tech stack (planned)
 
-| Layer | Choice | Reason |
-|---|---|---|
-| Framework | TanStack Start (RC) | Full-stack TypeScript, file-based routing, SSR |
-| Database | PostgreSQL + Drizzle ORM | Typed schema, migrations, relational data |
-| UI | shadcn/ui + Tailwind CSS | Mobile-first, accessible primitives |
-| Data sync | TanStack Query | Offline queue, background sync |
-| i18n | i18next + react-i18next | EN/ID support |
+| Layer     | Choice                   | Reason                                         |
+| --------- | ------------------------ | ---------------------------------------------- |
+| Framework | TanStack Start (RC)      | Full-stack TypeScript, file-based routing, SSR |
+| Database  | PostgreSQL + Drizzle ORM | Typed schema, migrations, relational data      |
+| UI        | shadcn/ui + Tailwind CSS | Mobile-first, accessible primitives            |
+| Data sync | TanStack Query           | Offline queue, background sync                 |
+| i18n      | i18next + react-i18next  | EN/ID support                                  |
 
 ## Build / test / lint
 
@@ -49,26 +49,29 @@ No back-navigation is permitted during Phase A or Phase B. This is a methodologi
 
 ## Six subscales
 
-| Code | Name | Low endpoint | High endpoint |
-|---|---|---|---|
-| MD | Mental Demand | Low | High |
-| PD | Physical Demand | Low | High |
-| TD | Temporal Demand | Low | High |
-| OP | Own Performance | Good | Poor |
-| EF | Effort | Low | High |
-| FR | Frustration | Low | High |
+| Code | Name            | Low endpoint | High endpoint |
+| ---- | --------------- | ------------ | ------------- |
+| MD   | Mental Demand   | Low          | High          |
+| PD   | Physical Demand | Low          | High          |
+| TD   | Temporal Demand | Low          | High          |
+| OP   | Own Performance | Good         | Poor          |
+| EF   | Effort          | Low          | High          |
+| FR   | Frustration     | Low          | High          |
 
 **Performance (OP) has reversed semantics**: Good = low workload, Poor = high workload. The slider label order differs from the other five subscales.
 
 ## Scoring formulas
 
 **Weighted TLX** (primary):
+
 ```
 WeightedTLX = Σ(rating[i] × weight[i]) / 15
 ```
+
 where `weight[i]` = number of times subscale `i` was chosen in Phase A pairwise comparisons.
 
 **Raw TLX** (secondary):
+
 ```
 RawTLX = mean(rating[1..6])
 ```

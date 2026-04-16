@@ -40,7 +40,9 @@ export function SubscaleComparisonCard({
     >
       <CardContent className="flex flex-col justify-center h-full py-4 px-4 min-h-[72px]">
         <p className="font-semibold text-base leading-tight">{name}</p>
-        <p className="text-sm text-muted-foreground mt-1 line-clamp-3">{description}</p>
+        <p className="text-sm text-muted-foreground mt-1 line-clamp-3">
+          {description}
+        </p>
       </CardContent>
     </Card>
   )

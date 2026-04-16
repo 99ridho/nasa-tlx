@@ -35,18 +35,28 @@ function StudyDetailComponent() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">{t('study.taskLabel')}:</span>
+              <span className="text-sm font-medium">
+                {t('study.taskLabel')}:
+              </span>
               <Badge>{study.taskLabel}</Badge>
             </div>
             {study.description && (
               <div>
-                <span className="text-sm font-medium">{t('study.description')}:</span>
-                <p className="text-sm text-muted-foreground mt-1">{study.description}</p>
+                <span className="text-sm font-medium">
+                  {t('study.description')}:
+                </span>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {study.description}
+                </p>
               </div>
             )}
             <div>
-              <span className="text-sm font-medium">{t('study.createdBy')}:</span>
-              <span className="text-sm text-muted-foreground ml-2">{study.createdBy}</span>
+              <span className="text-sm font-medium">
+                {t('study.createdBy')}:
+              </span>
+              <span className="text-sm text-muted-foreground ml-2">
+                {study.createdBy}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -61,7 +71,9 @@ function StudyDetailComponent() {
               >
                 <div className="text-3xl mb-2">👥</div>
                 <h2 className="font-semibold">{t('study.participants')}</h2>
-                <p className="text-sm text-muted-foreground mt-1">Manage study participants</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Manage study participants
+                </p>
               </Link>
             </CardContent>
           </Card>
@@ -75,7 +87,9 @@ function StudyDetailComponent() {
               >
                 <div className="text-3xl mb-2">📋</div>
                 <h2 className="font-semibold">{t('study.sessions')}</h2>
-                <p className="text-sm text-muted-foreground mt-1">View and start sessions</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  View and start sessions
+                </p>
               </Link>
             </CardContent>
           </Card>

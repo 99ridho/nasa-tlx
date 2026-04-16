@@ -2,14 +2,24 @@
 import { createServerFn } from '@tanstack/react-start'
 import { eq, count } from 'drizzle-orm'
 import { db } from '#/db/index'
-import { sessions, pairwiseComparisons, subscaleRatings, tlxScores } from '#/db/schema'
+import {
+  sessions,
+  pairwiseComparisons,
+  subscaleRatings,
+  tlxScores,
+} from '#/db/schema'
 import type {
   CompleteSessionInput,
   TLXScore,
   SubscaleCode,
   CollectionMode,
 } from '#/types/domain'
-import { computeWeights, computeWeightedTLX, computeRawTLX, SUBSCALE_CODES } from '#/lib/tlx-constants'
+import {
+  computeWeights,
+  computeWeightedTLX,
+  computeRawTLX,
+  SUBSCALE_CODES,
+} from '#/lib/tlx-constants'
 
 export const completeSession = createServerFn()
   .inputValidator((d: CompleteSessionInput) => d)
@@ -24,7 +34,9 @@ export const completeSession = createServerFn()
 
       if (!session) throw new Error(`Session not found: ${data.sessionId}`)
       if (session.status !== 'in_progress') {
-        throw new Error(`Session is not in progress (status: ${session.status})`)
+        throw new Error(
+          `Session is not in progress (status: ${session.status})`,
+        )
       }
 
       const collectionMode = session.collectionMode as CollectionMode
@@ -38,7 +50,7 @@ export const completeSession = createServerFn()
       // 3. Validate: exactly 15 pairwise (only required for weighted mode)
       if (collectionMode === 'weighted' && comparisons.length !== 15) {
         throw new Error(
-          `Expected 15 pairwise comparisons, got ${comparisons.length}`
+          `Expected 15 pairwise comparisons, got ${comparisons.length}`,
         )
       }
 
@@ -54,13 +66,21 @@ export const completeSession = createServerFn()
       }
 
       // 6. Compute weights
-      const weights = collectionMode === 'weighted'
-        ? computeWeights(comparisons.map((c) => ({ selected: c.selected as SubscaleCode })))
-        : { MD: 0, PD: 0, TD: 0, OP: 0, EF: 0, FR: 0 }
+      const weights =
+        collectionMode === 'weighted'
+          ? computeWeights(
+              comparisons.map((c) => ({
+                selected: c.selected as SubscaleCode,
+              })),
+            )
+          : { MD: 0, PD: 0, TD: 0, OP: 0, EF: 0, FR: 0 }
 
       // 7. Validate weight sum === 15 (only for weighted mode)
       if (collectionMode === 'weighted') {
-        const weightSum = SUBSCALE_CODES.reduce((acc, code) => acc + weights[code], 0)
+        const weightSum = SUBSCALE_CODES.reduce(
+          (acc, code) => acc + weights[code],
+          0,
+        )
         if (weightSum !== 15) {
           throw new Error(`Weight sum must be 15, got ${weightSum}`)
         }
@@ -68,7 +88,12 @@ export const completeSession = createServerFn()
 
       // 8. Build ratings record
       const ratingsRecord: Record<SubscaleCode, number> = {
-        MD: 0, PD: 0, TD: 0, OP: 0, EF: 0, FR: 0,
+        MD: 0,
+        PD: 0,
+        TD: 0,
+        OP: 0,
+        EF: 0,
+        FR: 0,
       }
       for (const r of ratings) {
         ratingsRecord[r.subscale as SubscaleCode] = r.rawValue
@@ -116,7 +141,8 @@ export const completeSession = createServerFn()
         weightOp: scoreRow.weightOp,
         weightEf: scoreRow.weightEf,
         weightFr: scoreRow.weightFr,
-        weightedTlx: scoreRow.weightedTlx !== null ? Number(scoreRow.weightedTlx) : null,
+        weightedTlx:
+          scoreRow.weightedTlx !== null ? Number(scoreRow.weightedTlx) : null,
         rawTlx: Number(scoreRow.rawTlx),
         computedAt: scoreRow.computedAt,
       }

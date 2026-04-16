@@ -10,8 +10,12 @@ export function useRatingMutation(sessionId: string) {
     mutationFn: (input: SubmitRatingInput) =>
       submitSubscaleRating({ data: input }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.sessions.ratings(sessionId) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.sessions.detail(sessionId) })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.sessions.ratings(sessionId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.sessions.detail(sessionId),
+      })
     },
   })
 }

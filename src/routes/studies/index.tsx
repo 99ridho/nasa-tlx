@@ -39,7 +39,11 @@ function StudiesComponent() {
             <Card key={study.id} className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">
-                  <Link to="/studies/$studyId" params={{ studyId: study.id }} className="hover:underline">
+                  <Link
+                    to="/studies/$studyId"
+                    params={{ studyId: study.id }}
+                    className="hover:underline"
+                  >
                     {study.name}
                   </Link>
                 </CardTitle>
@@ -49,7 +53,9 @@ function StudiesComponent() {
                   <Badge variant="outline">{study.taskLabel}</Badge>
                 </div>
                 {study.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">{study.description}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {study.description}
+                  </p>
                 )}
                 <div className="flex gap-3 text-sm">
                   <Link

@@ -2,7 +2,13 @@
 import { createServerFn } from '@tanstack/react-start'
 import { eq, max, count } from 'drizzle-orm'
 import { db } from '#/db/index'
-import { sessions, studies, participants, pairwiseComparisons, subscaleRatings } from '#/db/schema'
+import {
+  sessions,
+  studies,
+  participants,
+  pairwiseComparisons,
+  subscaleRatings,
+} from '#/db/schema'
 import type {
   CreateSessionInput,
   Session,
@@ -45,7 +51,9 @@ export const createSession = createServerFn()
     if (!study) throw new Error(`Study not found: ${data.studyId}`)
 
     // Generate randomized orders
-    const pairOrder = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+    const pairOrder = shuffleArray([
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+    ])
     const subscaleOrder = shuffleArray([...SUBSCALE_CODES])
     const sideOrder = Array.from({ length: 15 }, () => Math.random() < 0.5)
 
@@ -146,7 +154,12 @@ export const getSessionsByStudy = createServerFn()
 export const resumeSession = createServerFn()
   .inputValidator((d: { id: string }) => d)
   .handler(
-    async ({ data }): Promise<{ lastPairIndex: number | null; lastSubscaleIndex: number | null }> => {
+    async ({
+      data,
+    }): Promise<{
+      lastPairIndex: number | null
+      lastSubscaleIndex: number | null
+    }> => {
       const [pairResult] = await db
         .select({ maxIndex: max(pairwiseComparisons.pairIndex) })
         .from(pairwiseComparisons)
@@ -160,7 +173,9 @@ export const resumeSession = createServerFn()
       return {
         lastPairIndex: pairResult?.maxIndex ?? null,
         lastSubscaleIndex:
-          ratingResult && ratingResult.ratingCount > 0 ? ratingResult.ratingCount - 1 : null,
+          ratingResult && ratingResult.ratingCount > 0
+            ? ratingResult.ratingCount - 1
+            : null,
       }
-    }
+    },
   )

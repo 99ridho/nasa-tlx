@@ -9,7 +9,13 @@ interface TLXSliderProps {
   ariaLabel: string
 }
 
-export function TLXSlider({ value, onValueChange, leftLabel, rightLabel, ariaLabel }: TLXSliderProps) {
+export function TLXSlider({
+  value,
+  onValueChange,
+  leftLabel,
+  rightLabel,
+  ariaLabel,
+}: TLXSliderProps) {
   const [hasInteracted, setHasInteracted] = useState(false)
 
   function handleChange(values: number[]) {

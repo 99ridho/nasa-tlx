@@ -56,7 +56,11 @@ export default mock;
     // Run before other plugins so we intercept before rolldown's file resolver
     enforce: 'pre',
     resolveId(id) {
-      if (id === MOCK_PREFIX || id.startsWith(MOCK_EDGE_PREFIX) || id.startsWith(MOCK_BUILD_PREFIX)) {
+      if (
+        id === MOCK_PREFIX ||
+        id.startsWith(MOCK_EDGE_PREFIX) ||
+        id.startsWith(MOCK_BUILD_PREFIX)
+      ) {
         // Return a stable virtual ID using a plain prefix rolldown can handle
         return `\0${id}`
       }
@@ -70,12 +74,17 @@ export default mock;
       if (bare.startsWith(MOCK_EDGE_PREFIX)) {
         try {
           const payload = JSON.parse(
-            Buffer.from(bare.slice(MOCK_EDGE_PREFIX.length), 'base64url').toString(),
+            Buffer.from(
+              bare.slice(MOCK_EDGE_PREFIX.length),
+              'base64url',
+            ).toString(),
           ) as { exports?: string[]; runtimeId?: string }
           const exports = (payload.exports ?? []).filter(
             (n) => n.length > 0 && n !== 'default',
           )
-          const exportLines = exports.map((n) => `export const ${n} = mock.${n};`).join('\n')
+          const exportLines = exports
+            .map((n) => `export const ${n} = mock.${n};`)
+            .join('\n')
           return {
             code: `${silentMock()}\n${exportLines}\n`,
           }
