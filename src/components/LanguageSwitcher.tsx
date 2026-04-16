@@ -12,7 +12,6 @@ export function LanguageSwitcher() {
       size="sm"
       onClick={() => i18n.changeLanguage(otherLang)}
       aria-label={`Switch to ${otherLang === 'en' ? 'English' : 'Indonesian'}`}
-      className="min-h-[44px] min-w-[44px]"
     >
       {labels[i18n.language as 'en' | 'id'] ?? 'EN'}
     </Button>

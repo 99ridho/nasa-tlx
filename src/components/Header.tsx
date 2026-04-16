@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import ThemeToggle from './ThemeToggle'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { logoutAction } from '#/server/auth'
+import { Button } from '#/components/ui/button'
 
 export default function Header() {
   const { t } = useTranslation()
@@ -34,12 +35,9 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
-          <button
-            onClick={handleLogout}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
+          <Button variant="ghost" size="sm" onClick={handleLogout}>
             Logout
-          </button>
+          </Button>
         </div>
       </nav>
     </header>
