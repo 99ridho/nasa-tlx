@@ -16,10 +16,7 @@ export function TLXSlider({
   rightLabel,
   ariaLabel,
 }: TLXSliderProps) {
-  const [hasInteracted, setHasInteracted] = useState(false)
-
   function handleChange(values: number[]) {
-    setHasInteracted(true)
     onValueChange(values[0])
   }
 
@@ -32,7 +29,7 @@ export function TLXSlider({
           step={5}
           value={value !== null ? [value] : [50]}
           onValueChange={handleChange}
-          className={`min-h-[44px] ${!hasInteracted ? '[&_[role=slider]]:opacity-0' : ''}`}
+          className={'min-h-11'}
           aria-label={ariaLabel}
           aria-valuemin={0}
           aria-valuemax={100}

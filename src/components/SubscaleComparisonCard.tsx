@@ -3,7 +3,7 @@ import { Card, CardContent } from '#/components/ui/card'
 interface SubscaleComparisonCardProps {
   name: string
   description: string
-  isSelected: boolean
+  isSelected?: boolean
   onSelect: () => void
   disabled?: boolean
 }

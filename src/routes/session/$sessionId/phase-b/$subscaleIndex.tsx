@@ -73,6 +73,9 @@ function PhaseBComponent() {
       }
     } catch {
       // Error handled by mutation state
+    } finally {
+      setHasInteracted(false)
+      setRating(null)
     }
   }
 

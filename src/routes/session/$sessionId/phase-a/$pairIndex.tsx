@@ -102,14 +102,12 @@ function PhaseAComponent() {
           <SubscaleComparisonCard
             name={t(leftMeta.nameKey)}
             description={t(leftMeta.descriptionKey)}
-            isSelected={selected === leftCode}
             onSelect={() => handleSelect(leftCode)}
             disabled={mutation.isPending || !!alreadyAnswered}
           />
           <SubscaleComparisonCard
             name={t(rightMeta.nameKey)}
             description={t(rightMeta.descriptionKey)}
-            isSelected={selected === rightCode}
             onSelect={() => handleSelect(rightCode)}
             disabled={mutation.isPending || !!alreadyAnswered}
           />
