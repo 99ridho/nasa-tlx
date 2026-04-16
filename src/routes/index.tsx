@@ -1,9 +1,9 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { checkBasicAuth } from '#/lib/auth'
+import { checkAuth } from '#/server/auth'
 
 export const Route = createFileRoute('/')({
-  beforeLoad: () => {
-    checkBasicAuth()
+  beforeLoad: async () => {
+    await checkAuth()
     throw redirect({ to: '/studies' })
   },
 })

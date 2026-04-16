@@ -565,28 +565,29 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-AU-01: Researcher Route Authentication
 
-**Status:** 🔲 Planned
-**Description:** All researcher-facing routes are protected by HTTP Basic Authentication. Only an authenticated researcher can access study management and results.
+**Status:** ✅ Done
+**Description:** All researcher-facing routes are protected by a login page with JWT-based session. The researcher logs in via `/login` (username + password from `AUTH_USERNAME`/`AUTH_PASSWORD` env vars). On success, a signed JWT (HS256, 24h expiry) is stored in an httpOnly, SameSite=Lax cookie (`auth_token`). Protected routes check the cookie in `beforeLoad` and redirect to `/login` if missing or invalid. No user database is required — a single shared researcher credential is sufficient.
 **Acceptance Criteria:**
 
-- The following route prefixes require valid Basic Auth credentials to access:
-  - `/` (study list / home)
+- The following route prefixes require a valid auth cookie to access:
+  - `/` (redirects to `/studies` if authenticated, otherwise to `/login`)
   - `/studies/*` (all study management, participant management, results)
-- Credentials are configured via environment variables: `AUTH_USERNAME` and `AUTH_PASSWORD`
-- No user database is required for this iteration — a single shared researcher credential is sufficient
-- Unauthenticated requests to protected routes receive a `401 Unauthorized` response with a `WWW-Authenticate: Basic realm="Researcher Portal"` header, triggering the browser's native credential dialog
-- Credentials are validated on the server side (HTTP middleware or `beforeLoad` guard); client-side-only checks are not sufficient
+- Credentials are configured via environment variables: `AUTH_USERNAME`, `AUTH_PASSWORD`, and `JWT_SECRET`
+- No user database is required — a single shared researcher credential is sufficient
+- Unauthenticated requests to protected routes receive an HTTP 302 redirect to `/login`
+- Credentials are validated on the server side in `beforeLoad` guards; client-side-only checks are not sufficient
+- A logout button in the Header clears the cookie and redirects to `/login`
 - Session links (`/session/*`) are explicitly excluded from the auth requirement (see FR-AU-02)
 
 #### FR-AU-02: Participant Route Isolation
 
-**Status:** 🔲 Planned
+**Status:** ✅ Done
 **Description:** Participant-facing session routes are publicly accessible without authentication, and provide no pathway to researcher-protected routes.
 **Acceptance Criteria:**
 
-- Routes under `/session/*` do not require Basic Auth credentials
+- Routes under `/session/*` do not call `checkAuth` and are publicly accessible
 - No navigation element, link, or redirect on any `/session/*` page leads to `/studies` or any other protected route
-- A participant who manually navigates to `/studies` (e.g., by editing the URL) receives the standard `401` browser credential prompt — they are not silently granted access
+- A participant who manually navigates to `/studies` (e.g., by editing the URL) is redirected to `/login` — they are not silently granted access
 - The `/session/$sessionId/start` landing page (FR-SI-04) contains only: task label, collection mode indicator, language selector, and a "Begin" button — no researcher metadata or links
 
 ---

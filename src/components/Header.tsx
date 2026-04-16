@@ -1,10 +1,17 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import ThemeToggle from './ThemeToggle'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { logoutAction } from '#/server/auth'
 
 export default function Header() {
   const { t } = useTranslation()
+  const router = useRouter()
+
+  async function handleLogout() {
+    await logoutAction()
+    await router.navigate({ to: '/login' })
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
@@ -27,6 +34,12 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
+          <button
+            onClick={handleLogout}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Logout
+          </button>
         </div>
       </nav>
     </header>
