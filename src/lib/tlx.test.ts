@@ -7,7 +7,7 @@ import {
   computeRawTLX,
   CANONICAL_PAIRS,
   SUBSCALE_CODES,
-} from './tlx-constants'
+} from './tlx'
 import type { SubscaleCode } from '#/types/domain'
 
 describe('shuffleArray', () => {

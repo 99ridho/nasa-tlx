@@ -19,18 +19,20 @@ import {
   computeWeightedTLX,
   computeRawTLX,
   SUBSCALE_CODES,
-} from '#/lib/tlx-constants'
+} from '#/lib/tlx'
 
 export const completeSession = createServerFn()
   .inputValidator((d: CompleteSessionInput) => d)
   .handler(async ({ data }): Promise<TLXScore> => {
     return await db.transaction(async (tx) => {
       // 1. Fetch session
-      const session = (await tx
-        .select()
-        .from(sessions)
-        .where(eq(sessions.id, data.sessionId))
-        .limit(1)).at(0)
+      const session = (
+        await tx
+          .select()
+          .from(sessions)
+          .where(eq(sessions.id, data.sessionId))
+          .limit(1)
+      ).at(0)
 
       if (!session) throw new Error(`Session not found: ${data.sessionId}`)
       if (session.status !== 'in_progress') {
@@ -152,11 +154,13 @@ export const completeSession = createServerFn()
 export const getSessionScore = createServerFn()
   .inputValidator((d: { sessionId: string }) => d)
   .handler(async ({ data }): Promise<TLXScore | null> => {
-    const row = (await db
-      .select()
-      .from(tlxScores)
-      .where(eq(tlxScores.sessionId, data.sessionId))
-      .limit(1)).at(0)
+    const row = (
+      await db
+        .select()
+        .from(tlxScores)
+        .where(eq(tlxScores.sessionId, data.sessionId))
+        .limit(1)
+    ).at(0)
 
     if (!row) return null
 

@@ -20,7 +20,7 @@ import type {
   SessionStatus,
   SubscaleCode,
 } from '#/types/domain'
-import { shuffleArray, SUBSCALE_CODES } from '#/lib/tlx-constants'
+import { shuffleArray, SUBSCALE_CODES } from '#/lib/tlx'
 
 function mapSession(row: typeof sessions.$inferSelect): Session {
   return {
@@ -44,11 +44,13 @@ export const createSession = createServerFn()
   .inputValidator((d: CreateSessionInput) => d)
   .handler(async ({ data }): Promise<Session> => {
     // Fetch study to get taskLabel
-    const study = (await db
-      .select()
-      .from(studies)
-      .where(eq(studies.id, data.studyId))
-      .limit(1)).at(0)
+    const study = (
+      await db
+        .select()
+        .from(studies)
+        .where(eq(studies.id, data.studyId))
+        .limit(1)
+    ).at(0)
 
     if (!study) throw new Error(`Study not found: ${data.studyId}`)
 
@@ -162,15 +164,19 @@ export const resumeSession = createServerFn()
       lastPairIndex: number | null
       lastSubscaleIndex: number | null
     }> => {
-      const pairResult = (await db
-        .select({ maxIndex: max(pairwiseComparisons.pairIndex) })
-        .from(pairwiseComparisons)
-        .where(eq(pairwiseComparisons.sessionId, data.id))).at(0)
+      const pairResult = (
+        await db
+          .select({ maxIndex: max(pairwiseComparisons.pairIndex) })
+          .from(pairwiseComparisons)
+          .where(eq(pairwiseComparisons.sessionId, data.id))
+      ).at(0)
 
-      const ratingResult = (await db
-        .select({ ratingCount: count() })
-        .from(subscaleRatings)
-        .where(eq(subscaleRatings.sessionId, data.id))).at(0)
+      const ratingResult = (
+        await db
+          .select({ ratingCount: count() })
+          .from(subscaleRatings)
+          .where(eq(subscaleRatings.sessionId, data.id))
+      ).at(0)
 
       return {
         lastPairIndex: pairResult?.maxIndex ?? null,
@@ -185,11 +191,13 @@ export const resumeSession = createServerFn()
 export const createBatchSessions = createServerFn()
   .inputValidator((d: CreateBatchSessionsInput) => d)
   .handler(async ({ data }): Promise<BatchSessionResult> => {
-    const study = (await db
-      .select()
-      .from(studies)
-      .where(eq(studies.id, data.studyId))
-      .limit(1)).at(0)
+    const study = (
+      await db
+        .select()
+        .from(studies)
+        .where(eq(studies.id, data.studyId))
+        .limit(1)
+    ).at(0)
 
     if (!study) throw new Error(`Study not found: ${data.studyId}`)
 
@@ -201,11 +209,15 @@ export const createBatchSessions = createServerFn()
     const results: BatchSessionResult['sessions'] = []
 
     for (const p of participantRows) {
-      const pairOrder = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+      const pairOrder = shuffleArray([
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+      ])
       const subscaleOrder = shuffleArray([...SUBSCALE_CODES])
       const sideOrder = Array.from({ length: 15 }, () => Math.random() < 0.5)
       const phaseOrder: PhaseOrder =
-        data.collectionMode === 'raw_only' ? 'ratings_first' : 'comparisons_first'
+        data.collectionMode === 'raw_only'
+          ? 'ratings_first'
+          : 'comparisons_first'
 
       const [row] = await db
         .insert(sessions)

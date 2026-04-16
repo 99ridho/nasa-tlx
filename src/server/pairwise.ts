@@ -8,7 +8,7 @@ import type {
   SubmitPairwiseInput,
   SubscaleCode,
 } from '#/types/domain'
-import { CANONICAL_PAIRS } from '#/lib/tlx-constants'
+import { CANONICAL_PAIRS } from '#/lib/tlx'
 
 export const submitPairwiseComparison = createServerFn()
   .inputValidator((d: SubmitPairwiseInput) => d)
@@ -19,11 +19,13 @@ export const submitPairwiseComparison = createServerFn()
     }
 
     // Fetch session to validate it exists and is in_progress
-    const session = (await db
-      .select()
-      .from(sessions)
-      .where(eq(sessions.id, data.sessionId))
-      .limit(1)).at(0)
+    const session = (
+      await db
+        .select()
+        .from(sessions)
+        .where(eq(sessions.id, data.sessionId))
+        .limit(1)
+    ).at(0)
 
     if (!session) {
       throw new Error(`Session not found: ${data.sessionId}`)
@@ -58,10 +60,12 @@ export const submitPairwiseComparison = createServerFn()
       throw err
     }
 
-    const result = (await db
-      .select({ total: count() })
-      .from(pairwiseComparisons)
-      .where(eq(pairwiseComparisons.sessionId, data.sessionId))).at(0)
+    const result = (
+      await db
+        .select({ total: count() })
+        .from(pairwiseComparisons)
+        .where(eq(pairwiseComparisons.sessionId, data.sessionId))
+    ).at(0)
 
     return { pairsCompleted: result?.total ?? 0 }
   })

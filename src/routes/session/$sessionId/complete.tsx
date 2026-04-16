@@ -5,7 +5,7 @@ import { getSession } from '#/server/sessions'
 import { getSessionScore, completeSession } from '#/server/scores'
 import { getSubscaleRatings } from '#/server/ratings'
 import { getPairwiseComparisons } from '#/server/pairwise'
-import { SUBSCALE_CODES, SUBSCALE_META } from '#/lib/tlx-constants'
+import { SUBSCALE_CODES, SUBSCALE_META } from '#/lib/tlx'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Textarea } from '#/components/ui/textarea'
 import { Label } from '#/components/ui/label'
@@ -117,7 +117,9 @@ function CompleteComponent() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t('common.subscale')}</TableHead>
-                    <TableHead className="text-right">{t('common.weight')}</TableHead>
+                    <TableHead className="text-right">
+                      {t('common.weight')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -148,7 +150,9 @@ function CompleteComponent() {
             <TableHeader>
               <TableRow>
                 <TableHead>{t('common.subscale')}</TableHead>
-                <TableHead className="text-right">{t('common.rating')}</TableHead>
+                <TableHead className="text-right">
+                  {t('common.rating')}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -8,7 +8,7 @@ import type {
   SubmitRatingInput,
   SubscaleCode,
 } from '#/types/domain'
-import { snapSliderValue } from '#/lib/tlx-constants'
+import { snapSliderValue } from '#/lib/tlx'
 
 export const submitSubscaleRating = createServerFn()
   .inputValidator((d: SubmitRatingInput) => d)
@@ -16,16 +16,18 @@ export const submitSubscaleRating = createServerFn()
     const rawValue = snapSliderValue(data.sliderPosition)
 
     // Upsert: check if a rating already exists for this session + subscale
-    const existing = (await db
-      .select()
-      .from(subscaleRatings)
-      .where(
-        and(
-          eq(subscaleRatings.sessionId, data.sessionId),
-          eq(subscaleRatings.subscale, data.subscale),
-        ),
-      )
-      .limit(1)).at(0)
+    const existing = (
+      await db
+        .select()
+        .from(subscaleRatings)
+        .where(
+          and(
+            eq(subscaleRatings.sessionId, data.sessionId),
+            eq(subscaleRatings.subscale, data.subscale),
+          ),
+        )
+        .limit(1)
+    ).at(0)
 
     let row: typeof subscaleRatings.$inferSelect
 

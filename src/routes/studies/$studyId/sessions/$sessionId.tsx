@@ -5,7 +5,7 @@ import { getSession } from '#/server/sessions'
 import { getPairwiseComparisons } from '#/server/pairwise'
 import { getSubscaleRatings } from '#/server/ratings'
 import { getSessionScore } from '#/server/scores'
-import { SUBSCALE_META, SUBSCALE_CODES } from '#/lib/tlx-constants'
+import { SUBSCALE_META, SUBSCALE_CODES } from '#/lib/tlx'
 import { Button } from '#/components/ui/button'
 import { Badge } from '#/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
@@ -82,7 +82,9 @@ function SessionDetailComponent() {
       {/* Session Info */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-base">{t('session.information')}</CardTitle>
+          <CardTitle className="text-base">
+            {t('session.information')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-4 text-sm">
           <div>
@@ -142,7 +144,9 @@ function SessionDetailComponent() {
       {score && (
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-base">{t('session.tlxScores')}</CardTitle>
+            <CardTitle className="text-base">
+              {t('session.tlxScores')}
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4">
             {score.weightedTlx !== null && (
@@ -181,7 +185,9 @@ function SessionDetailComponent() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t('common.subscale')}</TableHead>
-                    <TableHead className="text-right">{t('common.weight')}</TableHead>
+                    <TableHead className="text-right">
+                      {t('common.weight')}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -211,7 +217,9 @@ function SessionDetailComponent() {
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('common.subscale')}</TableHead>
-                  <TableHead className="text-right">{t('common.rating')}</TableHead>
+                  <TableHead className="text-right">
+                    {t('common.rating')}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
