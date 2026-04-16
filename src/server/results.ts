@@ -10,15 +10,15 @@ export const getStudyResults = createServerFn()
   .inputValidator((d: { studyId: string }) => d)
   .handler(async ({ data }): Promise<StudyResults> => {
     // Count completed sessions
-    const [sessionCountResult] = await db
+    const sessionCountResult = (await db
       .select({ total: count() })
       .from(sessions)
-      .where(eq(sessions.studyId, data.studyId))
+      .where(eq(sessions.studyId, data.studyId))).at(0)
 
     const sessionCount = sessionCountResult?.total ?? 0
 
     // Aggregate weighted and raw TLX across completed sessions in this study
-    const [aggResult] = await db
+    const aggResult = (await db
       .select({
         meanWeightedTlx: avg(tlxScores.weightedTlx),
         sdWeightedTlx: sql<number>`stddev_pop(${tlxScores.weightedTlx})`,
@@ -27,21 +27,21 @@ export const getStudyResults = createServerFn()
       })
       .from(tlxScores)
       .innerJoin(sessions, eq(tlxScores.sessionId, sessions.id))
-      .where(eq(sessions.studyId, data.studyId))
+      .where(eq(sessions.studyId, data.studyId))).at(0)
 
     // Per-subscale rating averages and stddev
     const subscaleStats: Record<SubscaleCode, { mean: number; sd: number }> =
       {} as Record<SubscaleCode, { mean: number; sd: number }>
 
     for (const code of SUBSCALE_CODES) {
-      const [statResult] = await db
+      const statResult = (await db
         .select({
           mean: avg(subscaleRatings.rawValue),
           sd: sql<number>`stddev_pop(${subscaleRatings.rawValue})`,
         })
         .from(subscaleRatings)
         .innerJoin(sessions, eq(subscaleRatings.sessionId, sessions.id))
-        .where(eq(sessions.studyId, data.studyId))
+        .where(eq(sessions.studyId, data.studyId))).at(0)
 
       subscaleStats[code] = {
         mean:
@@ -49,7 +49,7 @@ export const getStudyResults = createServerFn()
             ? Number(statResult.mean)
             : 0,
         sd:
-          statResult?.sd !== null && statResult?.sd !== undefined
+          statResult?.sd !== undefined
             ? Number(statResult.sd)
             : 0,
       }
@@ -64,7 +64,6 @@ export const getStudyResults = createServerFn()
           ? Number(aggResult.meanWeightedTlx)
           : null,
       sdWeightedTlx:
-        aggResult?.sdWeightedTlx !== null &&
         aggResult?.sdWeightedTlx !== undefined
           ? Number(aggResult.sdWeightedTlx)
           : null,
@@ -73,7 +72,7 @@ export const getStudyResults = createServerFn()
           ? Number(aggResult.meanRawTlx)
           : 0,
       sdRawTlx:
-        aggResult?.sdRawTlx !== null && aggResult?.sdRawTlx !== undefined
+        aggResult?.sdRawTlx !== undefined
           ? Number(aggResult.sdRawTlx)
           : 0,
       subscaleStats,

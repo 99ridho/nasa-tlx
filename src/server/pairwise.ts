@@ -19,11 +19,11 @@ export const submitPairwiseComparison = createServerFn()
     }
 
     // Fetch session to validate it exists and is in_progress
-    const [session] = await db
+    const session = (await db
       .select()
       .from(sessions)
       .where(eq(sessions.id, data.sessionId))
-      .limit(1)
+      .limit(1)).at(0)
 
     if (!session) {
       throw new Error(`Session not found: ${data.sessionId}`)
@@ -58,10 +58,10 @@ export const submitPairwiseComparison = createServerFn()
       throw err
     }
 
-    const [result] = await db
+    const result = (await db
       .select({ total: count() })
       .from(pairwiseComparisons)
-      .where(eq(pairwiseComparisons.sessionId, data.sessionId))
+      .where(eq(pairwiseComparisons.sessionId, data.sessionId))).at(0)
 
     return { pairsCompleted: result?.total ?? 0 }
   })

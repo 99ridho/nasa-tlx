@@ -62,10 +62,10 @@ function ParticipantsComponent() {
       const result = await addParticipant({
         data: { studyId: study.id, participantCode: newCode.trim() },
       })
-      if ('type' in result && result.type === 'conflict') {
+      if ('type' in result) {
         setAddError(t('errors.duplicate'))
       } else {
-        setParticipants((prev) => [...prev, result as Participant])
+        setParticipants((prev) => [...prev, result])
         setNewCode('')
         router.invalidate()
       }

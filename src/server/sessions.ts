@@ -31,9 +31,9 @@ function mapSession(row: typeof sessions.$inferSelect): Session {
     collectionMode: row.collectionMode as CollectionMode,
     phaseOrder: row.phaseOrder as PhaseOrder,
     status: row.status as SessionStatus,
-    pairOrder: row.pairOrder as number[],
+    pairOrder: row.pairOrder,
     subscaleOrder: row.subscaleOrder as SubscaleCode[],
-    sideOrder: row.sideOrder as boolean[],
+    sideOrder: row.sideOrder,
     startedAt: row.startedAt,
     completedAt: row.completedAt ?? null,
     notes: row.notes ?? null,
@@ -44,11 +44,11 @@ export const createSession = createServerFn()
   .inputValidator((d: CreateSessionInput) => d)
   .handler(async ({ data }): Promise<Session> => {
     // Fetch study to get taskLabel
-    const [study] = await db
+    const study = (await db
       .select()
       .from(studies)
       .where(eq(studies.id, data.studyId))
-      .limit(1)
+      .limit(1)).at(0)
 
     if (!study) throw new Error(`Study not found: ${data.studyId}`)
 
@@ -162,15 +162,15 @@ export const resumeSession = createServerFn()
       lastPairIndex: number | null
       lastSubscaleIndex: number | null
     }> => {
-      const [pairResult] = await db
+      const pairResult = (await db
         .select({ maxIndex: max(pairwiseComparisons.pairIndex) })
         .from(pairwiseComparisons)
-        .where(eq(pairwiseComparisons.sessionId, data.id))
+        .where(eq(pairwiseComparisons.sessionId, data.id))).at(0)
 
-      const [ratingResult] = await db
+      const ratingResult = (await db
         .select({ ratingCount: count() })
         .from(subscaleRatings)
-        .where(eq(subscaleRatings.sessionId, data.id))
+        .where(eq(subscaleRatings.sessionId, data.id))).at(0)
 
       return {
         lastPairIndex: pairResult?.maxIndex ?? null,
@@ -185,11 +185,11 @@ export const resumeSession = createServerFn()
 export const createBatchSessions = createServerFn()
   .inputValidator((d: CreateBatchSessionsInput) => d)
   .handler(async ({ data }): Promise<BatchSessionResult> => {
-    const [study] = await db
+    const study = (await db
       .select()
       .from(studies)
       .where(eq(studies.id, data.studyId))
-      .limit(1)
+      .limit(1)).at(0)
 
     if (!study) throw new Error(`Study not found: ${data.studyId}`)
 

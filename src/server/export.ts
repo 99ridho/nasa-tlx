@@ -49,7 +49,7 @@ export const getStudySessionsExport = createServerFn()
         .from(subscaleRatings)
         .where(eq(subscaleRatings.sessionId, s.id))
 
-      const ratingMap: Record<string, number> = {}
+      const ratingMap: Partial<Record<string, number>> = {}
       for (const r of ratings) {
         ratingMap[r.subscale] = r.rawValue
       }
@@ -92,7 +92,6 @@ export function generateCSV(rows: ExportRow[]): string {
     headers
       .map((h) => {
         const value = row[h]
-        if (value === null || value === undefined) return ''
         const str = String(value)
         // Escape values containing commas, newlines, or quotes
         if (str.includes(',') || str.includes('\n') || str.includes('"')) {

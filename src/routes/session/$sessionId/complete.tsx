@@ -56,7 +56,7 @@ function CompleteComponent() {
   // Build lookup maps
   const ratingsBySubscale = Object.fromEntries(
     ratings.map((r) => [r.subscale, r.rawValue]),
-  ) as Record<SubscaleCode, number>
+  ) as Partial<Record<SubscaleCode, number>>
 
   const weights: Record<SubscaleCode, number> = score
     ? {

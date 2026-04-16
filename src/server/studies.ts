@@ -59,11 +59,11 @@ export const createStudy = createServerFn()
 export const getStudyById = createServerFn()
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data }): Promise<Study | null> => {
-    const [row] = await db
+    const row = (await db
       .select()
       .from(studies)
       .where(eq(studies.id, data.id))
-      .limit(1)
+      .limit(1)).at(0)
 
     if (!row) return null
 

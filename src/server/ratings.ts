@@ -16,7 +16,7 @@ export const submitSubscaleRating = createServerFn()
     const rawValue = snapSliderValue(data.sliderPosition)
 
     // Upsert: check if a rating already exists for this session + subscale
-    const [existing] = await db
+    const existing = (await db
       .select()
       .from(subscaleRatings)
       .where(
@@ -25,7 +25,7 @@ export const submitSubscaleRating = createServerFn()
           eq(subscaleRatings.subscale, data.subscale),
         ),
       )
-      .limit(1)
+      .limit(1)).at(0)
 
     let row: typeof subscaleRatings.$inferSelect
 
