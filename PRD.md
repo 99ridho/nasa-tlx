@@ -19,7 +19,7 @@
 6. [Scoring Logic](#6-scoring-logic)
 7. [Tech Stack](#7-tech-stack)
 8. [Non-Functional Requirements](#8-non-functional-requirements)
-9. [Out of Scope](#8-out-of-scope)
+9. [Out of Scope](#9-out-of-scope)
 
 ---
 
@@ -38,6 +38,8 @@ All requirements in this document are traced to:
 > Hart, S. G., & Staveland, L. E. (1988). Development of NASA-TLX (Task Load Index): Results of empirical and theoretical research. In P. A. Hancock & N. Meshkati (Eds.), _Human Mental Workload_ (pp. 139–183). Elsevier Science Publishers B.V. (North-Holland).
 
 Traceability tags use the format **[H&S p.XXX]** referring to the page number in the chapter as printed. Where multiple pages apply, a range is used (e.g., **[H&S pp.162–163]**).
+
+Requirements without a paper citation are explicitly labelled **Design decision** — indicating a UX, engineering, or ethical choice made by the product team that is not directly derivable from the source paper.
 
 ---
 
@@ -74,11 +76,11 @@ A valid NASA-TLX session consists of two sequential phases **[H&S p.170]**:
 1. **Phase A — Pairwise Comparisons (Weighting):** The participant decides which subscale contributed _more_ to their workload for the specific task just performed. All C(6,2) = **15 pairs** are presented. The number of times each subscale is selected becomes its weight (range 0–5).
 2. **Phase B — Subscale Ratings:** The participant rates the magnitude of each of the 6 subscales on a continuous scale.
 
-**Order:** Phases A and B may be presented in either order between implementations, but both must reference the **same specific task** just completed, not abstract or general workload **[H&S pp.168–170]**.
+**Order:** Both phases must reference the **same specific task** just completed, not abstract or general workload **[H&S pp.166–167]**. The configurable phase order (comparisons-first vs. ratings-first) is a design decision — H&S (1988) does not prescribe or discuss phase ordering.
 
 ### 3.3 The Scale Format
 
-The original instrument uses a **continuous 20-increment line** (effectively a 100-point scale in 5-point steps), presented as an **unmarked graphical continuum** bounded only by bipolar endpoint labels **[H&S p.170]**. Numerical values are **not displayed** to the participant during rating — they are assigned during analysis.
+The original instrument uses a **continuous 20-increment line** (effectively a 100-point scale in 5-point steps), presented as an **unmarked graphical continuum** bounded only by bipolar endpoint labels **[H&S pp.170–171]**. Numerical values are **not displayed** to the participant during rating — they are assigned during analysis.
 
 > "…graphic scales, represented by an unmarked continuum bounded by extreme anchor values, are preferable." **[H&S p.171]**
 
@@ -149,7 +151,7 @@ Stores participant metadata within a study.
 
 **Constraint:** `UNIQUE(study_id, participant_code)`
 
-> **Rationale:** Participant codes must be anonymous; no PII is stored in the application (e.g., no full name, birth date, or national ID). This is consistent with ethical data handling for human subjects research.
+> **Rationale:** Participant codes must be anonymous; no PII is stored in the application (e.g., no full name, birth date, or national ID). Design decision — ethical data handling requirement for human subjects research.
 
 ### 4.4 Table: `sessions`
 
@@ -221,7 +223,7 @@ Stores the raw magnitude rating for each subscale. One row per subscale per sess
 
 **Constraint:** `UNIQUE(session_id, subscale)`
 
-> **Scale precision note:** The original instrument divides the 12 cm line into 20 increments (5-point steps). Slider position is stored at full precision; `raw_value` is the snapped value to nearest 5-point increment for scoring. **[H&S p.170]**
+> **Scale precision note:** The original instrument presents ratings on a 12-cm line with values 1–100 assigned during analysis **[H&S pp.170–171]**. The 5-point step resolution (20 increments) follows the recommendation that "the optimal range of rating steps is from 10 to 20" **[H&S p.171]**. Slider position is stored at full precision; `raw_value` is the snapped value to the nearest 5-point increment for scoring.
 
 ### 4.7 Table: `tlx_scores`
 
@@ -253,9 +255,9 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SM-01: Create Study
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** A researcher can create a new study with a name, description, and default task label.  
-**Source:** Administrative requirement; no specific paper citation.  
+**Source:** Design decision — administrative requirement; no specific paper citation.  
 **Acceptance Criteria:**
 
 - Required fields: `name`, `task_label`
@@ -265,9 +267,9 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SM-02: Manage Participants
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** A researcher can add participants to a study using anonymous codes.  
-**Source:** Ethical data handling; paper uses "subjects" without PII **[H&S p.148]**.  
+**Source:** Design decision — ethical data handling requirement for human subjects research; the paper does not specify a participant identification scheme.  
 **Acceptance Criteria:**
 
 - Participant code is researcher-defined (e.g., initials + last 4 digits of student ID)
@@ -276,8 +278,9 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SM-03: Edit Study
 
-**Status:** 🔲 Planned
-**Description:** A researcher can edit an existing study's name, description, and task label.
+**Status:** 🔲 Planned  
+**Description:** A researcher can edit an existing study's name, description, and task label.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - Edit form pre-populated with current study values
@@ -288,8 +291,9 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SM-04: Delete Study
 
-**Status:** 🔲 Planned
-**Description:** A researcher can delete a study and all its associated data.
+**Status:** 🔲 Planned  
+**Description:** A researcher can delete a study and all its associated data.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - Delete action requires a confirmation dialog naming the study and stating all data will be permanently removed
@@ -301,8 +305,9 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SI-01: Start a New Session
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** A researcher or participant can start a new TLX session for a specific participant within a study.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - Researcher selects study → selects or creates participant → starts session
@@ -311,9 +316,9 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SI-02: Task Context Display
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The task label must be visible on every screen during Phases A and B.  
-**Source:** Weights should be obtained "with reference to a specific experience (e.g., the experimental task) rather than in the abstract." **[H&S p.168–169]**  
+**Source:** "Subjective estimates of weighting parameters would have been more useful had they been obtained with reference to a specific experience (e.g., the experimental task) rather than in the abstract." **[H&S pp.166–167]**  
 **Acceptance Criteria:**
 
 - Task label is shown as a persistent header or contextual reminder on each comparison and rating screen
@@ -321,7 +326,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SI-03: Collection Mode Selection
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The researcher can choose whether to collect pairwise comparison weights (full weighted TLX) or ratings only (raw TLX).  
 **Source:** Raw TLX (equal weighting) produces an intermediate result between WWL and OW **[H&S p.152]**; weighted is the validated method **[H&S p.170]**.  
 **Acceptance Criteria:**
@@ -332,9 +337,9 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SI-04: Batch Session Launch with Direct Participant Links
 
-**Status:** 🔲 Planned
-**Description:** A researcher can launch sessions for multiple participants simultaneously and share each participant a direct URL they use to self-administer the instrument on their own device.
-
+**Status:** 🔲 Planned  
+**Description:** A researcher can launch sessions for multiple participants simultaneously and share each participant a direct URL they use to self-administer the instrument on their own device.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 Session creation:
@@ -356,7 +361,7 @@ Direct participant links:
 
 #### FR-PA-01: Present All 15 Pairs
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The app presents all 15 pairwise combinations of the 6 subscales, one at a time.  
 **Source:** "Fifteen comparisons would be required to decide which member of each pair of the six factors was most significant in creating the level of workload experienced in performing a particular task." **[H&S p.170]**  
 **Acceptance Criteria:**
@@ -369,9 +374,9 @@ Direct participant links:
 
 #### FR-PA-02: Randomise Pair Order
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The order in which the 15 pairs are presented is randomised per session.  
-**Source:** "All possible pairs (n=36) of the nine factors were presented in a different random order to each subject." **[H&S p.148]** (the principle of randomisation carries forward to the six-subscale version)  
+**Source:** The paper states pairs were "presented in a different random order to each subject" **[H&S p.148]**. The principle is adopted here for the six-subscale version; the specific application to this digital implementation is a design decision.  
 **Acceptance Criteria:**
 
 - Pair presentation order is randomised at session start
@@ -380,7 +385,7 @@ Direct participant links:
 
 #### FR-PA-03: Display Subscale Descriptions During Comparison
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** Each subscale in a pair is shown with its full label and descriptive text, not just its acronym.  
 **Source:** Full descriptions are specified in Figure 8 **[H&S p.169]** to ensure participants understand each dimension.  
 **Acceptance Criteria:**
@@ -391,8 +396,9 @@ Direct participant links:
 
 #### FR-PA-04: Progress Indicator
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** A progress indicator shows how many of the 15 comparisons have been completed.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - Shows "X of 15" or a progress bar
@@ -400,9 +406,9 @@ Direct participant links:
 
 #### FR-PA-05: No Back Navigation During Phase A
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** Once a pairwise comparison is submitted, the participant cannot change it.  
-**Source:** Prevents rationalisation of earlier choices based on later pairs, consistent with the pairwise paradigm's independence assumption **[H&S p.148]**.  
+**Source:** Design decision — the paper does not address back-navigation. This constraint is a UX implementation choice to preserve response integrity.  
 **Acceptance Criteria:**
 
 - No "back" button during Phase A
@@ -412,7 +418,7 @@ Direct participant links:
 
 #### FR-PB-01: Present All 6 Subscales for Rating
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The participant rates each of the 6 subscales on a continuous scale.  
 **Source:** Six subscales as finalised in Figure 8 **[H&S p.169]**.  
 **Acceptance Criteria:**
@@ -423,7 +429,7 @@ Direct participant links:
 
 #### FR-PB-02: Continuous Slider — No Numeric Display
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** Each subscale is rated using a continuous horizontal slider. No numerical value is shown to the participant.  
 **Source:** "…graphic scales, represented by an unmarked continuum bounded by extreme anchor values, are preferable." and "Numerical values were not displayed, but values ranging from 1 to 100 were assigned to scale positions during data analysis." **[H&S pp.148, 170–171]**  
 **Acceptance Criteria:**
@@ -435,9 +441,9 @@ Direct participant links:
 
 #### FR-PB-03: Endpoint Labels Match the Paper
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** Bipolar endpoint labels must match those specified in Figure 8 of the paper.  
-**Source:** Figure 8, **[H&S p.169]**  
+**Source:** Figure 8 **[H&S p.169]**  
 **Acceptance Criteria:**
 
 | Subscale          | Left Endpoint | Right Endpoint |
@@ -453,9 +459,9 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-PB-04: Default Slider Position
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The slider has no default pre-selected position. It must require an explicit gesture from the participant before being considered answered.  
-**Source:** Implicit from the graphical rating procedure — a value is only assigned when the participant marks a position **[H&S p.148]**.  
+**Source:** Design decision — the paper does not specify interaction behaviour for a digital slider. This constraint ensures participants make a deliberate response rather than accepting an arbitrary default.  
 **Acceptance Criteria:**
 
 - Slider thumb is not shown until the participant interacts with the track
@@ -464,9 +470,9 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-PB-05: Subscale Order Randomisation
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The order in which the 6 subscales are presented for rating is randomised per session.  
-**Source:** Consistent with counterbalancing practices in the original experiments to avoid order effects **[H&S p.148]**.  
+**Source:** Design decision — the paper does not specify the presentation order of subscales during rating. Randomisation is adopted to mitigate order effects in repeated-measures contexts.  
 **Acceptance Criteria:**
 
 - Presentation order is randomised at session start
@@ -474,7 +480,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-PB-06: Subscale Descriptions Visible During Rating
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The full description of a subscale is shown while the participant rates it.  
 **Source:** Figure 8 descriptions **[H&S p.169]** ensure the participant understands what they are rating.  
 **Acceptance Criteria:**
@@ -486,7 +492,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-SC-01: Automatic Weight Computation
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** After Phase A, the app computes each subscale's weight as the count of times it was selected across the 15 pairs.  
 **Source:** "The member of each pair selected as most relevant to workload was recorded and the number of times each factor was selected was computed. The resulting values could range from 0 (not relevant) to 8 (more important than any other factor)." — for the 9-factor version; for 6 factors, the range is 0–5. **[H&S p.148]**  
 **Acceptance Criteria:**
@@ -497,7 +503,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-SC-02: Weighted TLX Score Computation
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The app computes the weighted TLX score (WWL) from weights and ratings.  
 **Source:** Formula derived from **[H&S pp.148, 152, 170]**  
 **Acceptance Criteria:**
@@ -509,7 +515,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-SC-03: Raw TLX Score Computation
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** The app also computes and stores the unweighted mean of all 6 subscale ratings.  
 **Source:** Equal-weighting scheme discussed as intermediate option **[H&S p.152]**  
 **Acceptance Criteria:**
@@ -520,8 +526,9 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-SC-04: Session Completion Confirmation
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** A clear confirmation screen is shown when both phases are complete.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - Displays weighted TLX score and raw TLX score
@@ -533,8 +540,9 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-RE-01: Study-Level Results View
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** A researcher can view aggregated results across all sessions in a study.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - Displays mean ± SD for: weighted TLX, raw TLX, and each subscale rating, per study
@@ -543,8 +551,9 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-RE-02: Session-Level Results View
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** A researcher can view full detail for any individual session.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - Shows all 15 pairwise comparison decisions with pair index and timestamps
@@ -553,8 +562,9 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-RE-03: CSV Export
 
-**Status:** ✅ Done
+**Status:** ✅ Done  
 **Description:** A researcher can export session data in CSV format.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - One row per session in the wide-format export
@@ -565,8 +575,9 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-AU-01: Researcher Route Authentication
 
-**Status:** ✅ Done
-**Description:** All researcher-facing routes are protected by a login page with JWT-based session. The researcher logs in via `/login` (username + password from `AUTH_USERNAME`/`AUTH_PASSWORD` env vars). On success, a signed JWT (HS256, 24h expiry) is stored in an httpOnly, SameSite=Lax cookie (`auth_token`). Protected routes check the cookie in `beforeLoad` and redirect to `/login` if missing or invalid. No user database is required — a single shared researcher credential is sufficient.
+**Status:** ✅ Done  
+**Description:** All researcher-facing routes are protected by a login page with JWT-based session.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - The following route prefixes require a valid auth cookie to access:
@@ -581,8 +592,9 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-AU-02: Participant Route Isolation
 
-**Status:** ✅ Done
-**Description:** Participant-facing session routes are publicly accessible without authentication, and provide no pathway to researcher-protected routes.
+**Status:** ✅ Done  
+**Description:** Participant-facing session routes are publicly accessible without authentication, and provide no pathway to researcher-protected routes.  
+**Source:** Design decision.  
 **Acceptance Criteria:**
 
 - Routes under `/session/*` do not call `checkAuth` and are publicly accessible
@@ -627,7 +639,7 @@ raw_tlx = mean(ratings[MD], ratings[PD], ratings[TD],
 
 ### 6.3 Edge Case: Zero-Weight Subscale
 
-A subscale with `weight = 0` is valid and contributes zero to the weighted TLX. This reflects the participant's judgement that the subscale was irrelevant to their workload experience for that task **[H&S p.148]**.
+A subscale with `weight = 0` is valid and contributes zero to the weighted TLX. This reflects the participant's judgement that the subscale was irrelevant to their workload experience for that task. The original 9-factor procedure noted weight values "could range from 0 (not relevant) to 8 (more important than any other factor)" **[H&S p.148]**; the same logic applies to the 6-subscale version (range 0–5).
 
 ### 6.4 Raw Value Mapping
 
@@ -637,7 +649,7 @@ Slider positions (0.00–100.00) are mapped to `raw_value` as:
 raw_value = round(slider_position / 5) * 5
 ```
 
-This enforces 5-point step resolution consistent with the original 20-increment scale **[H&S p.170]**. Both the exact `slider_position` and the snapped `raw_value` are stored.
+This enforces 5-point step resolution consistent with the recommendation that "the optimal range of rating steps is from 10 to 20" and values assigned 1–100 during analysis **[H&S pp.170–171]**. Both the exact `slider_position` and the snapped `raw_value` are stored.
 
 ---
 
@@ -654,6 +666,8 @@ This enforces 5-point step resolution consistent with the original 20-increment 
 | **State / Data Fetching** | TanStack Query                           | Offline queue + sync when connectivity restores (NFR 8.2); cache behaviour maps onto immediate-persist requirement (FR-PA-05, FR-PB-04)                                                      |
 | **i18n**                  | i18next + react-i18next                  | Externalisable string keys for EN/ID simultaneous release (NFR 8.5)                                                                                                                          |
 | **Deployment**            | Node.js server (self-hosted or cloud VM) | PostgreSQL connection requirement rules out edge runtime; compatible with Vercel/Render/Railway Node targets                                                                                 |
+
+---
 
 ## 8. Non-Functional Requirements
 
