@@ -1,6 +1,6 @@
 'use server'
 import { createServerFn } from '@tanstack/react-start'
-import { eq, max, count } from 'drizzle-orm'
+import { eq, max, count, inArray } from 'drizzle-orm'
 import { db } from '#/db/index'
 import {
   sessions,
@@ -11,6 +11,8 @@ import {
 } from '#/db/schema'
 import type {
   CreateSessionInput,
+  CreateBatchSessionsInput,
+  BatchSessionResult,
   Session,
   SessionWithRelations,
   CollectionMode,
@@ -179,3 +181,49 @@ export const resumeSession = createServerFn()
       }
     },
   )
+
+export const createBatchSessions = createServerFn()
+  .inputValidator((d: CreateBatchSessionsInput) => d)
+  .handler(async ({ data }): Promise<BatchSessionResult> => {
+    const [study] = await db
+      .select()
+      .from(studies)
+      .where(eq(studies.id, data.studyId))
+      .limit(1)
+
+    if (!study) throw new Error(`Study not found: ${data.studyId}`)
+
+    const participantRows = await db
+      .select()
+      .from(participants)
+      .where(inArray(participants.id, data.participantIds))
+
+    const results: BatchSessionResult['sessions'] = []
+
+    for (const p of participantRows) {
+      const pairOrder = shuffleArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+      const subscaleOrder = shuffleArray([...SUBSCALE_CODES])
+      const sideOrder = Array.from({ length: 15 }, () => Math.random() < 0.5)
+      const phaseOrder: PhaseOrder =
+        data.collectionMode === 'raw_only' ? 'ratings_first' : 'comparisons_first'
+
+      const [row] = await db
+        .insert(sessions)
+        .values({
+          studyId: data.studyId,
+          participantId: p.id,
+          taskLabel: study.taskLabel,
+          collectionMode: data.collectionMode,
+          phaseOrder,
+          status: 'in_progress',
+          pairOrder,
+          subscaleOrder,
+          sideOrder,
+        })
+        .returning()
+
+      results.push({ participantCode: p.participantCode, sessionId: row.id })
+    }
+
+    return { sessions: results }
+  })

@@ -68,11 +68,35 @@
       "notes": "Catatan Peneliti",
       "notesPlaceholder": "Tambahkan catatan tentang sesi ini...",
       "done": "Selesai"
-    }
+    },
+    "start": {
+      "title": "Sesi Siap",
+      "taskLabel": "Tugas",
+      "mode": {
+        "weighted": "NASA-TLX Lengkap (Perbandingan + Penilaian)",
+        "raw_only": "TLX Mentah (Penilaian Saja)"
+      },
+      "beginButton": "Mulai",
+      "alreadyCompleted": "Sesi ini sudah selesai."
+    },
+    "batchCreate": "Buat Sesi",
+    "selectAllEligible": "Pilih semua yang memenuhi syarat",
+    "deselectAll": "Batalkan semua pilihan",
+    "noEligible": "Semua peserta sudah memiliki sesi aktif.",
+    "sessionLinks": "Tautan Sesi",
+    "copyLink": "Salin",
+    "copyAll": "Salin semua"
   },
   "study": {
     "create": "Buat Studi",
     "edit": "Edit Studi",
+    "saveChanges": "Simpan Perubahan",
+    "editWarning": "Mengubah label tugas tidak akan memperbarui sesi yang sudah ada.",
+    "delete": "Hapus Studi",
+    "deleteConfirmTitle": "Hapus Studi",
+    "deleteConfirmDescription": "Ini akan menghapus permanen studi \"{{name}}\" beserta semua peserta, sesi, dan datanya.",
+    "deleteConfirmPlaceholder": "Ketik \"{{name}}\" untuk konfirmasi",
+    "deleteWarningInProgress": "Studi ini memiliki sesi yang sedang berlangsung. Menghapusnya akan menghilangkan semua data sesi yang sedang berjalan.",
     "name": "Nama Studi",
     "namePlaceholder": "Masukkan nama studi",
     "taskLabel": "Label Tugas",

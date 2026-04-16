@@ -68,11 +68,35 @@
       "notes": "Researcher Notes",
       "notesPlaceholder": "Add notes about this session...",
       "done": "Done"
-    }
+    },
+    "start": {
+      "title": "Session Ready",
+      "taskLabel": "Task",
+      "mode": {
+        "weighted": "Full NASA-TLX (Pairwise + Ratings)",
+        "raw_only": "Raw TLX (Ratings Only)"
+      },
+      "beginButton": "Begin",
+      "alreadyCompleted": "This session has already been completed."
+    },
+    "batchCreate": "Create Sessions",
+    "selectAllEligible": "Select all eligible",
+    "deselectAll": "Deselect all",
+    "noEligible": "All participants already have active sessions.",
+    "sessionLinks": "Session Links",
+    "copyLink": "Copy",
+    "copyAll": "Copy all"
   },
   "study": {
     "create": "Create Study",
     "edit": "Edit Study",
+    "saveChanges": "Save Changes",
+    "editWarning": "Changing the task label will not retroactively update existing sessions.",
+    "delete": "Delete Study",
+    "deleteConfirmTitle": "Delete Study",
+    "deleteConfirmDescription": "This will permanently delete the study \"{{name}}\" and all associated participants, sessions, and data.",
+    "deleteConfirmPlaceholder": "Type \"{{name}}\" to confirm",
+    "deleteWarningInProgress": "This study has active sessions in progress. Deleting it will discard all in-progress session data.",
     "name": "Study Name",
     "namePlaceholder": "Enter study name",
     "taskLabel": "Task Label",

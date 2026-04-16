@@ -1,17 +1,19 @@
 import {
   createFileRoute,
   Link,
-  useNavigate,
+  useRouter,
   notFound,
 } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { getStudyById } from '#/server/studies'
 import { getParticipants } from '#/server/participants'
-import { getSessionsByStudy, createSession } from '#/server/sessions'
+import { getSessionsByStudy, createBatchSessions } from '#/server/sessions'
 import { getStudyResults } from '#/server/results'
 import { Button } from '#/components/ui/button'
 import { Badge } from '#/components/ui/badge'
+import { Checkbox } from '#/components/ui/checkbox'
+import { Label } from '#/components/ui/label'
 import {
   Table,
   TableBody,
@@ -27,15 +29,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '#/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '#/components/ui/select'
-import { Label } from '#/components/ui/label'
-import type { CollectionMode, SessionWithRelations } from '#/types/domain'
+import type { CollectionMode, SessionWithRelations, BatchSessionResult } from '#/types/domain'
 
 export const Route = createFileRoute('/studies/$studyId/sessions/')({
   loader: async ({ params }) => {
@@ -70,46 +64,96 @@ function SessionStatusBadge({
 function SessionsComponent() {
   const { study, sessions, participants, results } = Route.useLoaderData()
   const { t } = useTranslation()
-  const navigate = useNavigate()
+  const router = useRouter()
 
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [selectedParticipantId, setSelectedParticipantId] = useState<string>('')
-  const [collectionMode, setCollectionMode] =
-    useState<CollectionMode>('weighted')
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [collectionMode, setCollectionMode] = useState<CollectionMode>('weighted')
   const [isStarting, setIsStarting] = useState(false)
   const [startError, setStartError] = useState<string | null>(null)
+  const [batchResults, setBatchResults] = useState<BatchSessionResult['sessions'] | null>(null)
 
-  async function handleStartSession() {
-    if (!selectedParticipantId) {
-      setStartError('Please select a participant')
+  // Participants that already have an in_progress session
+  const inProgressParticipantIds = new Set(
+    sessions
+      .filter((s) => s.status === 'in_progress')
+      .map((s) => s.participantId),
+  )
+
+  const eligibleParticipants = participants.filter(
+    (p) => !inProgressParticipantIds.has(p.id),
+  )
+
+  const allEligibleSelected =
+    eligibleParticipants.length > 0 &&
+    eligibleParticipants.every((p) => selectedIds.has(p.id))
+
+  function toggleSelectAll() {
+    if (allEligibleSelected) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(eligibleParticipants.map((p) => p.id)))
+    }
+  }
+
+  function toggleParticipant(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  function closeDialog() {
+    setDialogOpen(false)
+    setSelectedIds(new Set())
+    setCollectionMode('weighted')
+    setStartError(null)
+    setBatchResults(null)
+  }
+
+  async function handleCreateSessions() {
+    if (selectedIds.size === 0) {
+      setStartError('Please select at least one participant')
       return
     }
     setIsStarting(true)
     setStartError(null)
     try {
-      const session = await createSession({
+      const result = await createBatchSessions({
         data: {
           studyId: study.id,
-          participantId: selectedParticipantId,
+          participantIds: Array.from(selectedIds),
           collectionMode,
         },
       })
-
-      setDialogOpen(false)
-      if (collectionMode === 'weighted') {
-        await navigate({
-          to: '/session/$sessionId/phase-a/$pairIndex',
-          params: { sessionId: session.id, pairIndex: '0' },
-        })
-      } else {
-        await navigate({
-          to: '/session/$sessionId/phase-b/$subscaleIndex',
-          params: { sessionId: session.id, subscaleIndex: '0' },
-        })
-      }
+      setBatchResults(result.sessions)
+    } catch {
+      setStartError('Failed to create sessions. Please try again.')
     } finally {
       setIsStarting(false)
     }
+  }
+
+  function copyLink(sessionId: string) {
+    navigator.clipboard.writeText(
+      `${window.location.origin}/session/${sessionId}/start`,
+    )
+  }
+
+  function copyAll() {
+    if (!batchResults) return
+    const text = batchResults
+      .map(
+        (r) =>
+          `${r.participantCode}: ${window.location.origin}/session/${r.sessionId}/start`,
+      )
+      .join('\n')
+    navigator.clipboard.writeText(text)
   }
 
   return (
@@ -151,7 +195,7 @@ function SessionsComponent() {
 
       <div className="flex justify-end mb-4">
         <Button onClick={() => setDialogOpen(true)} className="min-h-[44px]">
-          Start New Session
+          {t('session.batchCreate')}
         </Button>
       </div>
 
@@ -214,77 +258,148 @@ function SessionsComponent() {
         </div>
       )}
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
+      <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog() }}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Start New Session</DialogTitle>
+            <DialogTitle>
+              {batchResults ? t('session.sessionLinks') : t('session.batchCreate')}
+            </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="participant-select">Participant</Label>
-              <Select
-                value={selectedParticipantId}
-                onValueChange={setSelectedParticipantId}
-              >
-                <SelectTrigger id="participant-select" className="min-h-[44px]">
-                  <SelectValue placeholder="Select participant..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {participants.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.participantCode}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
-            <div className="space-y-1.5">
-              <Label>Collection Mode</Label>
-              <div className="flex gap-2">
+          {batchResults === null ? (
+            /* Creation phase */
+            <div className="space-y-4 py-2">
+              {eligibleParticipants.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  {t('session.noEligible')}
+                </p>
+              ) : (
+                <>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label>Participants</Label>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={toggleSelectAll}
+                        className="text-xs h-7"
+                      >
+                        {allEligibleSelected
+                          ? t('session.deselectAll')
+                          : t('session.selectAllEligible')}
+                      </Button>
+                    </div>
+                    <div className="rounded-md border divide-y max-h-48 overflow-y-auto">
+                      {eligibleParticipants.map((p) => (
+                        <label
+                          key={p.id}
+                          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-muted/50"
+                        >
+                          <Checkbox
+                            checked={selectedIds.has(p.id)}
+                            onCheckedChange={() => toggleParticipant(p.id)}
+                          />
+                          <span className="text-sm font-mono">
+                            {p.participantCode}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label>Collection Mode</Label>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant={collectionMode === 'weighted' ? 'default' : 'outline'}
+                        onClick={() => setCollectionMode('weighted')}
+                        className="min-h-[44px] flex-1"
+                      >
+                        Weighted TLX
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={collectionMode === 'raw_only' ? 'default' : 'outline'}
+                        onClick={() => setCollectionMode('raw_only')}
+                        className="min-h-[44px] flex-1"
+                      >
+                        Raw TLX Only
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {startError && (
+                <p className="text-sm text-destructive">{startError}</p>
+              )}
+
+              <DialogFooter>
                 <Button
-                  type="button"
-                  variant={
-                    collectionMode === 'weighted' ? 'default' : 'outline'
-                  }
-                  onClick={() => setCollectionMode('weighted')}
-                  className="min-h-[44px] flex-1"
+                  variant="outline"
+                  onClick={closeDialog}
+                  className="min-h-[44px]"
                 >
-                  Weighted TLX
+                  {t('common.cancel')}
                 </Button>
                 <Button
-                  type="button"
-                  variant={
-                    collectionMode === 'raw_only' ? 'default' : 'outline'
-                  }
-                  onClick={() => setCollectionMode('raw_only')}
-                  className="min-h-[44px] flex-1"
+                  onClick={handleCreateSessions}
+                  disabled={isStarting || selectedIds.size === 0 || eligibleParticipants.length === 0}
+                  className="min-h-[44px]"
                 >
-                  Raw TLX Only
+                  {isStarting ? t('common.loading') : t('session.batchCreate')}
                 </Button>
+              </DialogFooter>
+            </div>
+          ) : (
+            /* Results phase */
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                {batchResults.map((r) => (
+                  <div
+                    key={r.sessionId}
+                    className="flex items-center gap-2 rounded-md border px-3 py-2"
+                  >
+                    <span className="text-sm font-mono font-medium w-24 shrink-0">
+                      {r.participantCode}
+                    </span>
+                    <span className="text-xs text-muted-foreground flex-1 truncate">
+                      {window.location.origin}/session/{r.sessionId}/start
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyLink(r.sessionId)}
+                      className="shrink-0 h-7 text-xs"
+                    >
+                      {t('session.copyLink')}
+                    </Button>
+                  </div>
+                ))}
               </div>
-            </div>
 
-            {startError && (
-              <p className="text-sm text-destructive">{startError}</p>
-            )}
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDialogOpen(false)}
-              className="min-h-[44px]"
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button
-              onClick={handleStartSession}
-              disabled={isStarting}
-              className="min-h-[44px]"
-            >
-              {isStarting ? t('common.loading') : 'Start'}
-            </Button>
-          </DialogFooter>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={copyAll}
+                  className="min-h-[44px]"
+                >
+                  {t('session.copyAll')}
+                </Button>
+                <Button
+                  onClick={() => {
+                    router.invalidate()
+                    closeDialog()
+                  }}
+                  className="min-h-[44px]"
+                >
+                  Done
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </main>

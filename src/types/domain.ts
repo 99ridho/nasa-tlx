@@ -108,6 +108,16 @@ export interface CreateSessionInput {
   collectionMode: CollectionMode
 }
 
+export interface CreateBatchSessionsInput {
+  studyId: string
+  participantIds: string[]
+  collectionMode: CollectionMode
+}
+
+export interface BatchSessionResult {
+  sessions: Array<{ participantCode: string; sessionId: string }>
+}
+
 export interface SubmitPairwiseInput {
   sessionId: string
   pairIndex: number
