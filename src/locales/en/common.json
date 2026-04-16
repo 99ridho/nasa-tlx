@@ -1,5 +1,115 @@
 {
   "app": {
-    "name": "NASA-TLX"
+    "name": "NASA-TLX",
+    "tagline": "Task Load Index Assessment"
+  },
+  "nav": {
+    "studies": "Studies",
+    "home": "Home"
+  },
+  "subscale": {
+    "MD": {
+      "name": "Mental Demand",
+      "description": "How much mental and perceptual activity was required (e.g. thinking, deciding, calculating, remembering, looking, searching)? Was the task easy or demanding, simple or complex, exacting or forgiving?",
+      "left": "Low",
+      "right": "High"
+    },
+    "PD": {
+      "name": "Physical Demand",
+      "description": "How much physical activity was required (e.g. pushing, pulling, turning, activating, controlling)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?",
+      "left": "Low",
+      "right": "High"
+    },
+    "TD": {
+      "name": "Temporal Demand",
+      "description": "How much time pressure did you feel due to the rate or pace at which the tasks or task elements occurred? Was the pace slow and leisurely or rapid and frantic?",
+      "left": "Low",
+      "right": "High"
+    },
+    "OP": {
+      "name": "Own Performance",
+      "description": "How successful do you think you were in accomplishing the goals of the task set by the experimenter (or yourself)? How satisfied were you with your performance in accomplishing these goals?",
+      "left": "Good",
+      "right": "Poor"
+    },
+    "EF": {
+      "name": "Effort",
+      "description": "How hard did you have to work (mentally and physically) to accomplish your level of performance?",
+      "left": "Low",
+      "right": "High"
+    },
+    "FR": {
+      "name": "Frustration",
+      "description": "How insecure, discouraged, irritated, stressed, and annoyed were you versus secure, gratified, content, relaxed, and complacent?",
+      "left": "Low",
+      "right": "High"
+    }
+  },
+  "phaseA": {
+    "title": "Pairwise Comparisons",
+    "progress": "Comparison {{current}} of {{total}}",
+    "instruction": "Which factor contributed more to the workload of the task?",
+    "taskLabel": "Task"
+  },
+  "phaseB": {
+    "title": "Workload Ratings",
+    "progress": "Rating {{current}} of {{total}}",
+    "instruction": "Rate the workload level for this dimension.",
+    "notSet": "Move the slider to set a rating"
+  },
+  "session": {
+    "taskLabel": "Task",
+    "complete": {
+      "title": "Session Complete",
+      "weightedTLX": "Weighted TLX Score",
+      "rawTLX": "Raw TLX Score (unweighted)",
+      "weightProfile": "Subscale Weight Profile",
+      "ratingSummary": "Subscale Ratings",
+      "notes": "Researcher Notes",
+      "notesPlaceholder": "Add notes about this session...",
+      "done": "Done"
+    }
+  },
+  "study": {
+    "create": "Create Study",
+    "edit": "Edit Study",
+    "name": "Study Name",
+    "namePlaceholder": "Enter study name",
+    "taskLabel": "Task Label",
+    "taskLabelPlaceholder": "Short label shown to participants",
+    "description": "Description",
+    "descriptionPlaceholder": "Optional description of the study",
+    "createdBy": "Created By",
+    "createdByPlaceholder": "Your name",
+    "noStudies": "No studies yet. Create your first study.",
+    "participants": "Participants",
+    "sessions": "Sessions",
+    "export": "Export CSV"
+  },
+  "participant": {
+    "code": "Participant Code",
+    "codePlaceholder": "Enter participant code",
+    "add": "Add Participant",
+    "noParticipants": "No participants yet.",
+    "deleteConfirm": "Remove this participant?"
+  },
+  "errors": {
+    "required": "This field is required",
+    "duplicate": "This code already exists for this study",
+    "notFound": "Not found",
+    "sessionNotComplete": "Session is not complete",
+    "invalidPairIndex": "Invalid pair index",
+    "pairAlreadySubmitted": "This comparison has already been submitted",
+    "sessionNotInProgress": "Session is not in progress"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "back": "Back",
+    "loading": "Loading...",
+    "next": "Next",
+    "submit": "Submit",
+    "language": "Language"
   }
 }

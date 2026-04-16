@@ -1,5 +1,115 @@
 {
   "app": {
-    "name": "NASA-TLX"
+    "name": "NASA-TLX",
+    "tagline": "Penilaian Indeks Beban Tugas"
+  },
+  "nav": {
+    "studies": "Studi",
+    "home": "Beranda"
+  },
+  "subscale": {
+    "MD": {
+      "name": "Tuntutan Mental",
+      "description": "Seberapa besar aktivitas mental dan persepsi yang diperlukan (misalnya berpikir, memutuskan, menghitung, mengingat, melihat, mencari)? Apakah tugas tersebut mudah atau menuntut, sederhana atau rumit, tepat atau toleran?",
+      "left": "Rendah",
+      "right": "Tinggi"
+    },
+    "PD": {
+      "name": "Tuntutan Fisik",
+      "description": "Seberapa besar aktivitas fisik yang diperlukan (misalnya mendorong, menarik, memutar, mengaktifkan, mengendalikan)? Apakah tugas tersebut mudah atau menuntut, lambat atau cepat, santai atau berat?",
+      "left": "Rendah",
+      "right": "Tinggi"
+    },
+    "TD": {
+      "name": "Tuntutan Temporal",
+      "description": "Seberapa besar tekanan waktu yang Anda rasakan akibat laju atau kecepatan tugas atau elemen tugas? Apakah kecepatannya lambat dan santai atau cepat dan sibuk?",
+      "left": "Rendah",
+      "right": "Tinggi"
+    },
+    "OP": {
+      "name": "Performa Diri",
+      "description": "Seberapa berhasil Anda menyelesaikan tujuan tugas yang ditetapkan? Seberapa puas Anda dengan performa dalam menyelesaikan tujuan tersebut?",
+      "left": "Baik",
+      "right": "Buruk"
+    },
+    "EF": {
+      "name": "Upaya",
+      "description": "Seberapa keras Anda harus bekerja (secara mental dan fisik) untuk mencapai tingkat performa Anda?",
+      "left": "Rendah",
+      "right": "Tinggi"
+    },
+    "FR": {
+      "name": "Frustrasi",
+      "description": "Seberapa tidak aman, putus asa, tersinggung, stres, dan terganggu Anda versus aman, puas, tenang, rileks, dan nyaman?",
+      "left": "Rendah",
+      "right": "Tinggi"
+    }
+  },
+  "phaseA": {
+    "title": "Perbandingan Berpasangan",
+    "progress": "Perbandingan {{current}} dari {{total}}",
+    "instruction": "Faktor mana yang lebih berkontribusi terhadap beban kerja tugas?",
+    "taskLabel": "Tugas"
+  },
+  "phaseB": {
+    "title": "Penilaian Beban Kerja",
+    "progress": "Penilaian {{current}} dari {{total}}",
+    "instruction": "Nilai tingkat beban kerja untuk dimensi ini.",
+    "notSet": "Geser slider untuk memberikan penilaian"
+  },
+  "session": {
+    "taskLabel": "Tugas",
+    "complete": {
+      "title": "Sesi Selesai",
+      "weightedTLX": "Skor TLX Berbobot",
+      "rawTLX": "Skor TLX Mentah (tidak berbobot)",
+      "weightProfile": "Profil Bobot Subskala",
+      "ratingSummary": "Penilaian Subskala",
+      "notes": "Catatan Peneliti",
+      "notesPlaceholder": "Tambahkan catatan tentang sesi ini...",
+      "done": "Selesai"
+    }
+  },
+  "study": {
+    "create": "Buat Studi",
+    "edit": "Edit Studi",
+    "name": "Nama Studi",
+    "namePlaceholder": "Masukkan nama studi",
+    "taskLabel": "Label Tugas",
+    "taskLabelPlaceholder": "Label singkat yang ditampilkan kepada peserta",
+    "description": "Deskripsi",
+    "descriptionPlaceholder": "Deskripsi opsional tentang studi",
+    "createdBy": "Dibuat Oleh",
+    "createdByPlaceholder": "Nama Anda",
+    "noStudies": "Belum ada studi. Buat studi pertama Anda.",
+    "participants": "Peserta",
+    "sessions": "Sesi",
+    "export": "Ekspor CSV"
+  },
+  "participant": {
+    "code": "Kode Peserta",
+    "codePlaceholder": "Masukkan kode peserta",
+    "add": "Tambah Peserta",
+    "noParticipants": "Belum ada peserta.",
+    "deleteConfirm": "Hapus peserta ini?"
+  },
+  "errors": {
+    "required": "Kolom ini wajib diisi",
+    "duplicate": "Kode ini sudah ada untuk studi ini",
+    "notFound": "Tidak ditemukan",
+    "sessionNotComplete": "Sesi belum selesai",
+    "invalidPairIndex": "Indeks pasangan tidak valid",
+    "pairAlreadySubmitted": "Perbandingan ini sudah dikirimkan",
+    "sessionNotInProgress": "Sesi tidak sedang berlangsung"
+  },
+  "common": {
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "back": "Kembali",
+    "loading": "Memuat...",
+    "next": "Lanjut",
+    "submit": "Kirim",
+    "language": "Bahasa"
   }
 }

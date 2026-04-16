@@ -1,9 +1,8 @@
 import i18n from 'i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
-
-import enCommon from '../locales/en/common.json'
-import idCommon from '../locales/id/common.json'
+import LanguageDetector from 'i18next-browser-languagedetector'
+import enCommon from '#/locales/en/common.json'
+import idCommon from '#/locales/id/common.json'
 
 i18n
   .use(LanguageDetector)
@@ -13,12 +12,10 @@ i18n
       en: { common: enCommon },
       id: { common: idCommon },
     },
+    defaultNS: 'common',
     fallbackLng: 'en',
     supportedLngs: ['en', 'id'],
-    defaultNS: 'common',
-    interpolation: {
-      escapeValue: false,
-    },
+    interpolation: { escapeValue: false },
   })
 
 export default i18n
