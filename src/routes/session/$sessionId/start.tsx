@@ -1,13 +1,56 @@
-import { createFileRoute, useNavigate, notFound } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, notFound, redirect } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { getSession } from '#/server/sessions'
+import { getSession, resumeSession } from '#/server/sessions'
 import { Button } from '#/components/ui/button'
 import { LanguageSwitcher } from '#/components/LanguageSwitcher'
 
 export const Route = createFileRoute('/session/$sessionId/start')({
   loader: async ({ params }) => {
-    const session = await getSession({ data: { id: params.sessionId } })
+    const [session, progress] = await Promise.all([
+      getSession({ data: { id: params.sessionId } }),
+      resumeSession({ data: { id: params.sessionId } }),
+    ])
     if (!session) throw notFound()
+    if (session.status === 'completed') return { session }
+
+    const { lastPairIndex, lastSubscaleIndex } = progress
+    const sid = params.sessionId
+
+    if (session.collectionMode === 'weighted') {
+      if (lastPairIndex !== null && lastPairIndex < 14) {
+        throw redirect({
+          to: '/session/$sessionId/phase-a/$pairIndex',
+          params: { sessionId: sid, pairIndex: String(lastPairIndex + 1) },
+        })
+      }
+      if (lastPairIndex === 14) {
+        if (lastSubscaleIndex === null) {
+          throw redirect({
+            to: '/session/$sessionId/phase-b/$subscaleIndex',
+            params: { sessionId: sid, subscaleIndex: '0' },
+          })
+        }
+        if (lastSubscaleIndex < 5) {
+          throw redirect({
+            to: '/session/$sessionId/phase-b/$subscaleIndex',
+            params: { sessionId: sid, subscaleIndex: String(lastSubscaleIndex + 1) },
+          })
+        }
+        throw redirect({ to: '/session/$sessionId/complete', params: { sessionId: sid } })
+      }
+    } else {
+      // raw_only
+      if (lastSubscaleIndex !== null) {
+        if (lastSubscaleIndex < 5) {
+          throw redirect({
+            to: '/session/$sessionId/phase-b/$subscaleIndex',
+            params: { sessionId: sid, subscaleIndex: String(lastSubscaleIndex + 1) },
+          })
+        }
+        throw redirect({ to: '/session/$sessionId/complete', params: { sessionId: sid } })
+      }
+    }
+
     return { session }
   },
   component: StartComponent,
