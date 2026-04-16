@@ -11,6 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudiesIndexRouteImport } from './routes/studies/index'
+import { Route as StudiesNewRouteImport } from './routes/studies/new'
+import { Route as StudiesStudyIdIndexRouteImport } from './routes/studies/$studyId/index'
+import { Route as StudiesStudyIdParticipantsRouteImport } from './routes/studies/$studyId/participants'
+import { Route as StudiesStudyIdSessionsIndexRouteImport } from './routes/studies/$studyId/sessions/index'
+import { Route as SessionSessionIdPhaseAPairIndexRouteImport } from './routes/session/$sessionId/phase-a/$pairIndex'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -22,31 +28,113 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudiesIndexRoute = StudiesIndexRouteImport.update({
+  id: '/studies/',
+  path: '/studies/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudiesNewRoute = StudiesNewRouteImport.update({
+  id: '/studies/new',
+  path: '/studies/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudiesStudyIdIndexRoute = StudiesStudyIdIndexRouteImport.update({
+  id: '/studies/$studyId/',
+  path: '/studies/$studyId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudiesStudyIdParticipantsRoute =
+  StudiesStudyIdParticipantsRouteImport.update({
+    id: '/studies/$studyId/participants',
+    path: '/studies/$studyId/participants',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const StudiesStudyIdSessionsIndexRoute =
+  StudiesStudyIdSessionsIndexRouteImport.update({
+    id: '/studies/$studyId/sessions/',
+    path: '/studies/$studyId/sessions/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SessionSessionIdPhaseAPairIndexRoute =
+  SessionSessionIdPhaseAPairIndexRouteImport.update({
+    id: '/session/$sessionId/phase-a/$pairIndex',
+    path: '/session/$sessionId/phase-a/$pairIndex',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/studies/new': typeof StudiesNewRoute
+  '/studies/': typeof StudiesIndexRoute
+  '/studies/$studyId/participants': typeof StudiesStudyIdParticipantsRoute
+  '/studies/$studyId/': typeof StudiesStudyIdIndexRoute
+  '/session/$sessionId/phase-a/$pairIndex': typeof SessionSessionIdPhaseAPairIndexRoute
+  '/studies/$studyId/sessions/': typeof StudiesStudyIdSessionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/studies/new': typeof StudiesNewRoute
+  '/studies': typeof StudiesIndexRoute
+  '/studies/$studyId/participants': typeof StudiesStudyIdParticipantsRoute
+  '/studies/$studyId': typeof StudiesStudyIdIndexRoute
+  '/session/$sessionId/phase-a/$pairIndex': typeof SessionSessionIdPhaseAPairIndexRoute
+  '/studies/$studyId/sessions': typeof StudiesStudyIdSessionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/studies/new': typeof StudiesNewRoute
+  '/studies/': typeof StudiesIndexRoute
+  '/studies/$studyId/participants': typeof StudiesStudyIdParticipantsRoute
+  '/studies/$studyId/': typeof StudiesStudyIdIndexRoute
+  '/session/$sessionId/phase-a/$pairIndex': typeof SessionSessionIdPhaseAPairIndexRoute
+  '/studies/$studyId/sessions/': typeof StudiesStudyIdSessionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/studies/new'
+    | '/studies/'
+    | '/studies/$studyId/participants'
+    | '/studies/$studyId/'
+    | '/session/$sessionId/phase-a/$pairIndex'
+    | '/studies/$studyId/sessions/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to:
+    | '/'
+    | '/about'
+    | '/studies/new'
+    | '/studies'
+    | '/studies/$studyId/participants'
+    | '/studies/$studyId'
+    | '/session/$sessionId/phase-a/$pairIndex'
+    | '/studies/$studyId/sessions'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/studies/new'
+    | '/studies/'
+    | '/studies/$studyId/participants'
+    | '/studies/$studyId/'
+    | '/session/$sessionId/phase-a/$pairIndex'
+    | '/studies/$studyId/sessions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  StudiesNewRoute: typeof StudiesNewRoute
+  StudiesIndexRoute: typeof StudiesIndexRoute
+  StudiesStudyIdParticipantsRoute: typeof StudiesStudyIdParticipantsRoute
+  StudiesStudyIdIndexRoute: typeof StudiesStudyIdIndexRoute
+  SessionSessionIdPhaseAPairIndexRoute: typeof SessionSessionIdPhaseAPairIndexRoute
+  StudiesStudyIdSessionsIndexRoute: typeof StudiesStudyIdSessionsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +153,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/studies/': {
+      id: '/studies/'
+      path: '/studies'
+      fullPath: '/studies/'
+      preLoaderRoute: typeof StudiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studies/new': {
+      id: '/studies/new'
+      path: '/studies/new'
+      fullPath: '/studies/new'
+      preLoaderRoute: typeof StudiesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studies/$studyId/': {
+      id: '/studies/$studyId/'
+      path: '/studies/$studyId'
+      fullPath: '/studies/$studyId/'
+      preLoaderRoute: typeof StudiesStudyIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studies/$studyId/participants': {
+      id: '/studies/$studyId/participants'
+      path: '/studies/$studyId/participants'
+      fullPath: '/studies/$studyId/participants'
+      preLoaderRoute: typeof StudiesStudyIdParticipantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studies/$studyId/sessions/': {
+      id: '/studies/$studyId/sessions/'
+      path: '/studies/$studyId/sessions'
+      fullPath: '/studies/$studyId/sessions/'
+      preLoaderRoute: typeof StudiesStudyIdSessionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/session/$sessionId/phase-a/$pairIndex': {
+      id: '/session/$sessionId/phase-a/$pairIndex'
+      path: '/session/$sessionId/phase-a/$pairIndex'
+      fullPath: '/session/$sessionId/phase-a/$pairIndex'
+      preLoaderRoute: typeof SessionSessionIdPhaseAPairIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  StudiesNewRoute: StudiesNewRoute,
+  StudiesIndexRoute: StudiesIndexRoute,
+  StudiesStudyIdParticipantsRoute: StudiesStudyIdParticipantsRoute,
+  StudiesStudyIdIndexRoute: StudiesStudyIdIndexRoute,
+  SessionSessionIdPhaseAPairIndexRoute: SessionSessionIdPhaseAPairIndexRoute,
+  StudiesStudyIdSessionsIndexRoute: StudiesStudyIdSessionsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
