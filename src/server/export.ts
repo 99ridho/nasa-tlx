@@ -28,7 +28,7 @@ interface ExportRow {
 }
 
 export const getStudySessionsExport = createServerFn()
-  .validator((d: { studyId: string }) => d)
+  .inputValidator((d: { studyId: string }) => d)
   .handler(async ({ data }): Promise<ExportRow[]> => {
     // Fetch all completed sessions for the study with participant info and scores
     const completedSessions = await db
@@ -106,7 +106,7 @@ export function generateCSV(rows: Record<string, unknown>[]): string {
 }
 
 export const downloadStudyCSV = createServerFn()
-  .validator((d: { studyId: string }) => d)
+  .inputValidator((d: { studyId: string }) => d)
   .handler(async ({ data }): Promise<Response> => {
     const exportRows = await db
       .select({

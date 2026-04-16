@@ -7,7 +7,7 @@ import type { PairwiseComparison, SubmitPairwiseInput, SubscaleCode } from '#/ty
 import { CANONICAL_PAIRS } from '#/lib/tlx-constants'
 
 export const submitPairwiseComparison = createServerFn()
-  .validator((d: SubmitPairwiseInput) => d)
+  .inputValidator((d: SubmitPairwiseInput) => d)
   .handler(async ({ data }): Promise<{ pairsCompleted: number }> => {
     // Validate pairIndex range
     if (data.pairIndex < 0 || data.pairIndex > 14) {
@@ -61,7 +61,7 @@ export const submitPairwiseComparison = createServerFn()
   })
 
 export const getPairwiseComparisons = createServerFn()
-  .validator((d: { sessionId: string }) => d)
+  .inputValidator((d: { sessionId: string }) => d)
   .handler(async ({ data }): Promise<PairwiseComparison[]> => {
     const rows = await db
       .select()

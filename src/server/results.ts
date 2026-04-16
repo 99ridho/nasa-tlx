@@ -7,7 +7,7 @@ import type { StudyResults, SubscaleCode } from '#/types/domain'
 import { SUBSCALE_CODES } from '#/lib/tlx-constants'
 
 export const getStudyResults = createServerFn()
-  .validator((d: { studyId: string }) => d)
+  .inputValidator((d: { studyId: string }) => d)
   .handler(async ({ data }): Promise<StudyResults> => {
     // Count completed sessions
     const [sessionCountResult] = await db

@@ -12,7 +12,7 @@ import type {
 import { computeWeights, computeWeightedTLX, computeRawTLX, SUBSCALE_CODES } from '#/lib/tlx-constants'
 
 export const completeSession = createServerFn()
-  .validator((d: CompleteSessionInput) => d)
+  .inputValidator((d: CompleteSessionInput) => d)
   .handler(async ({ data }): Promise<TLXScore> => {
     return await db.transaction(async (tx) => {
       // 1. Fetch session
@@ -124,7 +124,7 @@ export const completeSession = createServerFn()
   })
 
 export const getSessionScore = createServerFn()
-  .validator((d: { sessionId: string }) => d)
+  .inputValidator((d: { sessionId: string }) => d)
   .handler(async ({ data }): Promise<TLXScore | null> => {
     const [row] = await db
       .select()

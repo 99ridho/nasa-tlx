@@ -7,7 +7,7 @@ import type { AddParticipantInput, ConflictError, Participant } from '#/types/do
 import { validateAddParticipant } from './validation'
 
 export const getParticipants = createServerFn()
-  .validator((d: { studyId: string }) => d)
+  .inputValidator((d: { studyId: string }) => d)
   .handler(async ({ data }): Promise<Participant[]> => {
     const rows = await db
       .select()
@@ -23,7 +23,7 @@ export const getParticipants = createServerFn()
   })
 
 export const addParticipant = createServerFn()
-  .validator((d: AddParticipantInput) => d)
+  .inputValidator((d: AddParticipantInput) => d)
   .handler(async ({ data }): Promise<Participant | ConflictError> => {
     const errors = validateAddParticipant(data)
     if (errors.length > 0) {
@@ -58,7 +58,7 @@ export const addParticipant = createServerFn()
   })
 
 export const deleteParticipant = createServerFn()
-  .validator((d: { id: string }) => d)
+  .inputValidator((d: { id: string }) => d)
   .handler(async ({ data }): Promise<{ success: boolean }> => {
     await db.delete(participants).where(eq(participants.id, data.id))
     return { success: true }

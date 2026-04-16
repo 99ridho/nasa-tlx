@@ -33,7 +33,7 @@ function mapSession(row: typeof sessions.$inferSelect): Session {
 }
 
 export const createSession = createServerFn()
-  .validator((d: CreateSessionInput) => d)
+  .inputValidator((d: CreateSessionInput) => d)
   .handler(async ({ data }): Promise<Session> => {
     // Fetch study to get taskLabel
     const [study] = await db
@@ -71,7 +71,7 @@ export const createSession = createServerFn()
   })
 
 export const getSession = createServerFn()
-  .validator((d: { id: string }) => d)
+  .inputValidator((d: { id: string }) => d)
   .handler(async ({ data }): Promise<SessionWithRelations | null> => {
     const rows = await db
       .select({
@@ -110,7 +110,7 @@ export const getSession = createServerFn()
   })
 
 export const getSessionsByStudy = createServerFn()
-  .validator((d: { studyId: string }) => d)
+  .inputValidator((d: { studyId: string }) => d)
   .handler(async ({ data }): Promise<SessionWithRelations[]> => {
     const rows = await db
       .select({
@@ -144,7 +144,7 @@ export const getSessionsByStudy = createServerFn()
   })
 
 export const resumeSession = createServerFn()
-  .validator((d: { id: string }) => d)
+  .inputValidator((d: { id: string }) => d)
   .handler(
     async ({ data }): Promise<{ lastPairIndex: number | null; lastSubscaleIndex: number | null }> => {
       const [pairResult] = await db

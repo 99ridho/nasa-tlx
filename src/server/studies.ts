@@ -20,7 +20,7 @@ export const getStudies = createServerFn().handler(async (): Promise<Study[]> =>
 })
 
 export const createStudy = createServerFn()
-  .validator((d: CreateStudyInput) => d)
+  .inputValidator((d: CreateStudyInput) => d)
   .handler(async ({ data }): Promise<Study | ValidationError[]> => {
     const errors = validateCreateStudy(data)
     if (errors.length > 0) return errors
@@ -47,7 +47,7 @@ export const createStudy = createServerFn()
   })
 
 export const getStudyById = createServerFn()
-  .validator((d: { id: string }) => d)
+  .inputValidator((d: { id: string }) => d)
   .handler(async ({ data }): Promise<Study | null> => {
     const [row] = await db
       .select()
@@ -69,7 +69,7 @@ export const getStudyById = createServerFn()
   })
 
 export const updateStudy = createServerFn()
-  .validator((d: { id: string; input: UpdateStudyInput }) => d)
+  .inputValidator((d: { id: string; input: UpdateStudyInput }) => d)
   .handler(async ({ data }): Promise<Study | ValidationError[]> => {
     const errors = validateUpdateStudy(data.input)
     if (errors.length > 0) return errors

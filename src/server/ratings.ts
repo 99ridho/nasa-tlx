@@ -7,7 +7,7 @@ import type { SubscaleRating, SubmitRatingInput, SubscaleCode } from '#/types/do
 import { snapSliderValue } from '#/lib/tlx-constants'
 
 export const submitSubscaleRating = createServerFn()
-  .validator((d: SubmitRatingInput) => d)
+  .inputValidator((d: SubmitRatingInput) => d)
   .handler(async ({ data }): Promise<SubscaleRating> => {
     const rawValue = snapSliderValue(data.sliderPosition)
 
@@ -60,7 +60,7 @@ export const submitSubscaleRating = createServerFn()
   })
 
 export const getSubscaleRatings = createServerFn()
-  .validator((d: { sessionId: string }) => d)
+  .inputValidator((d: { sessionId: string }) => d)
   .handler(async ({ data }): Promise<SubscaleRating[]> => {
     const rows = await db
       .select()
