@@ -206,6 +206,104 @@ describe('computeRawTLX', () => {
   })
 })
 
+describe('full session pipeline — realistic stub data', () => {
+  /**
+   * Scenario: software debugging task
+   *
+   * Participant pairwise selections (one per canonical pair, in canonical order):
+   *   MD-PD  → MD   (mental effort dominates physical)
+   *   MD-TD  → MD   (mental demand > time pressure)
+   *   MD-OP  → MD   (mental demand > performance concern)
+   *   MD-EF  → MD   (mental demand > effort, as framed by participant)
+   *   MD-FR  → MD   (mental demand > frustration)
+   *   PD-TD  → TD   (time pressure > negligible physical load)
+   *   PD-OP  → OP   (performance concern > physical load)
+   *   PD-EF  → EF   (effort > physical load)
+   *   PD-FR  → FR   (frustration > physical load)
+   *   TD-OP  → TD   (time pressure > performance concern)
+   *   TD-EF  → EF   (effort > time pressure)
+   *   TD-FR  → FR   (frustration > time pressure)
+   *   OP-EF  → EF   (effort > performance concern)
+   *   OP-FR  → FR   (frustration > performance concern)
+   *   EF-FR  → EF   (effort > frustration)
+   *
+   * Derived weights: MD=5, PD=0, TD=2, OP=1, EF=4, FR=3  (sum=15 ✓)
+   *
+   * Subscale ratings (0–100, multiples of 5):
+   *   MD=85, PD=10, TD=55, OP=40, EF=75, FR=60
+   *
+   * Expected WeightedTLX = (85×5 + 10×0 + 55×2 + 40×1 + 75×4 + 60×3) / 15
+   *                      = (425 + 0 + 110 + 40 + 300 + 180) / 15
+   *                      = 1055 / 15
+   *                      ≈ 70.33
+   *
+   * Expected RawTLX = (85 + 10 + 55 + 40 + 75 + 60) / 6
+   *                 = 325 / 6
+   *                 ≈ 54.17
+   */
+
+  const comparisons: Array<{ selected: SubscaleCode }> = [
+    { selected: 'MD' }, // MD vs PD
+    { selected: 'MD' }, // MD vs TD
+    { selected: 'MD' }, // MD vs OP
+    { selected: 'MD' }, // MD vs EF
+    { selected: 'MD' }, // MD vs FR
+    { selected: 'TD' }, // PD vs TD
+    { selected: 'OP' }, // PD vs OP
+    { selected: 'EF' }, // PD vs EF
+    { selected: 'FR' }, // PD vs FR
+    { selected: 'TD' }, // TD vs OP
+    { selected: 'EF' }, // TD vs EF
+    { selected: 'FR' }, // TD vs FR
+    { selected: 'EF' }, // OP vs EF
+    { selected: 'FR' }, // OP vs FR
+    { selected: 'EF' }, // EF vs FR
+  ]
+
+  const ratings: Record<SubscaleCode, number> = {
+    MD: 85,
+    PD: 10,
+    TD: 55,
+    OP: 40,
+    EF: 75,
+    FR: 60,
+  }
+
+  it('derives correct weights from pairwise selections', () => {
+    const weights = computeWeights(comparisons)
+    expect(weights.MD).toBe(5)
+    expect(weights.PD).toBe(0)
+    expect(weights.TD).toBe(2)
+    expect(weights.OP).toBe(1)
+    expect(weights.EF).toBe(4)
+    expect(weights.FR).toBe(3)
+  })
+
+  it('weight sum invariant holds (must equal 15)', () => {
+    const weights = computeWeights(comparisons)
+    const sum = SUBSCALE_CODES.reduce((acc, code) => acc + weights[code], 0)
+    expect(sum).toBe(15)
+  })
+
+  it('computes weighted TLX ≈ 70.33', () => {
+    const weights = computeWeights(comparisons)
+    expect(computeWeightedTLX(weights, ratings)).toBeCloseTo(70.333, 2)
+  })
+
+  it('computes raw TLX ≈ 54.17', () => {
+    expect(computeRawTLX(ratings)).toBeCloseTo(54.167, 2)
+  })
+
+  it('weighted TLX exceeds raw TLX when high-weight subscales have high ratings', () => {
+    // MD (weight=5, rating=85) and EF (weight=4, rating=75) pull the weighted
+    // score above the raw mean because they dominate the weight distribution.
+    const weights = computeWeights(comparisons)
+    expect(computeWeightedTLX(weights, ratings)).toBeGreaterThan(
+      computeRawTLX(ratings),
+    )
+  })
+})
+
 describe('CANONICAL_PAIRS', () => {
   it('has exactly 15 pairs', () => {
     expect(CANONICAL_PAIRS).toHaveLength(15)
