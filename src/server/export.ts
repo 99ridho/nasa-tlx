@@ -3,8 +3,6 @@ import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { sessions, participants, tlxScores, subscaleRatings } from '#/db/schema'
-import type { SubscaleCode } from '#/types/domain'
-import { SUBSCALE_CODES } from '#/lib/tlx-constants'
 
 interface ExportRow {
   session_id: string
@@ -107,62 +105,3 @@ export function generateCSV(rows: Record<string, unknown>[]): string {
 
   return [headerRow, ...dataRows].join('\n')
 }
-
-export const downloadStudyCSV = createServerFn()
-  .inputValidator((d: { studyId: string }) => d)
-  .handler(async ({ data }): Promise<Response> => {
-    const exportRows = await db
-      .select({
-        session: sessions,
-        participant: participants,
-        score: tlxScores,
-      })
-      .from(sessions)
-      .innerJoin(participants, eq(sessions.participantId, participants.id))
-      .leftJoin(tlxScores, eq(sessions.id, tlxScores.sessionId))
-      .where(eq(sessions.studyId, data.studyId))
-
-    const rows: Record<string, unknown>[] = []
-
-    for (const { session: s, participant: p, score } of exportRows) {
-      const ratings = await db
-        .select()
-        .from(subscaleRatings)
-        .where(eq(subscaleRatings.sessionId, s.id))
-
-      const ratingMap: Record<string, number> = {}
-      for (const r of ratings) {
-        ratingMap[r.subscale] = r.rawValue
-      }
-
-      rows.push({
-        session_id: s.id,
-        participant_code: p.participantCode,
-        completed_at: s.completedAt ? s.completedAt.toISOString() : '',
-        collection_mode: s.collectionMode,
-        weighted_tlx: score?.weightedTlx ?? '',
-        raw_tlx: score?.rawTlx ?? '',
-        weight_md: score?.weightMd ?? '',
-        weight_pd: score?.weightPd ?? '',
-        weight_td: score?.weightTd ?? '',
-        weight_op: score?.weightOp ?? '',
-        weight_ef: score?.weightEf ?? '',
-        weight_fr: score?.weightFr ?? '',
-        rating_md: ratingMap['MD'] ?? '',
-        rating_pd: ratingMap['PD'] ?? '',
-        rating_td: ratingMap['TD'] ?? '',
-        rating_op: ratingMap['OP'] ?? '',
-        rating_ef: ratingMap['EF'] ?? '',
-        rating_fr: ratingMap['FR'] ?? '',
-      })
-    }
-
-    const csv = generateCSV(rows)
-
-    return new Response(csv, {
-      headers: {
-        'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename="study-${data.studyId}-export.csv"`,
-      },
-    })
-  })
