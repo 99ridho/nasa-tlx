@@ -2,9 +2,9 @@
 
 # NASA-TLX Mobile-First Web Application
 
-**Version:** 1.0  
+**Version:** 1.2  
 **Author:** Draft for Review  
-**Status:** Draft  
+**Status:** In Progress  
 **Last Updated:** 2026-04-16
 
 ---
@@ -253,6 +253,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SM-01: Create Study
 
+**Status:** ✅ Done
 **Description:** A researcher can create a new study with a name, description, and default task label.  
 **Source:** Administrative requirement; no specific paper citation.  
 **Acceptance Criteria:**
@@ -264,6 +265,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SM-02: Manage Participants
 
+**Status:** ✅ Done
 **Description:** A researcher can add participants to a study using anonymous codes.  
 **Source:** Ethical data handling; paper uses "subjects" without PII **[H&S p.148]**.  
 **Acceptance Criteria:**
@@ -272,10 +274,34 @@ Computed scores stored after session completion. One row per session.
 - Duplicate codes within a study are rejected
 - No PII fields (no full name, birth date, national ID number)
 
+#### FR-SM-03: Edit Study
+
+**Status:** 🔲 Planned
+**Description:** A researcher can edit an existing study's name, description, and task label.
+**Acceptance Criteria:**
+
+- Edit form pre-populated with current study values
+- Required fields: `name`, `task_label`
+- `description` is optional
+- Saving updates `updated_at` timestamp
+- If any sessions exist, a non-blocking warning is shown: "Changing the task label will not retroactively update existing sessions."
+
+#### FR-SM-04: Delete Study
+
+**Status:** 🔲 Planned
+**Description:** A researcher can delete a study and all its associated data.
+**Acceptance Criteria:**
+
+- Delete action requires a confirmation dialog naming the study and stating all data will be permanently removed
+- Cascade deletes: participants → sessions → pairwise_comparisons → subscale_ratings → tlx_scores
+- Studies with in-progress sessions show an additional warning
+- After deletion, researcher is redirected to the study list
+
 ### 5.2 Session Initiation
 
 #### FR-SI-01: Start a New Session
 
+**Status:** ✅ Done
 **Description:** A researcher or participant can start a new TLX session for a specific participant within a study.  
 **Acceptance Criteria:**
 
@@ -285,6 +311,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SI-02: Task Context Display
 
+**Status:** ✅ Done
 **Description:** The task label must be visible on every screen during Phases A and B.  
 **Source:** Weights should be obtained "with reference to a specific experience (e.g., the experimental task) rather than in the abstract." **[H&S p.168–169]**  
 **Acceptance Criteria:**
@@ -294,6 +321,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SI-03: Collection Mode Selection
 
+**Status:** ✅ Done
 **Description:** The researcher can choose whether to collect pairwise comparison weights (full weighted TLX) or ratings only (raw TLX).  
 **Source:** Raw TLX (equal weighting) produces an intermediate result between WWL and OW **[H&S p.152]**; weighted is the validated method **[H&S p.170]**.  
 **Acceptance Criteria:**
@@ -302,10 +330,33 @@ Computed scores stored after session completion. One row per session.
 - `raw_only` mode skips Phase A entirely
 - Mode is locked once a session begins
 
+#### FR-SI-04: Batch Session Launch with Direct Participant Links
+
+**Status:** 🔲 Planned
+**Description:** A researcher can launch sessions for multiple participants simultaneously and share each participant a direct URL they use to self-administer the instrument on their own device.
+
+**Acceptance Criteria:**
+
+Session creation:
+
+- "Start Session" dialog now allows multi-select: researcher can select one, multiple, or all participants (excluding those with an existing in-progress session)
+- "Select all eligible" shortcut selects all participants without an active session
+- One session is created per selected participant in a single action
+
+Direct participant links:
+
+- After creation, the UI displays a list of participant code + session link pairs
+- Each link targets `/session/$sessionId/start` — a landing page that shows the task label and a "Begin" button, before entering Phase A or Phase B
+- Links are copy-to-clipboard per row; a "Copy all" option copies all links as a formatted list
+- Links are accessible without authentication — the session ID is the only credential
+- The `/session/$sessionId/start` landing page is participant-facing (bilingual EN/ID); it shows the task label and collection mode but no researcher-visible metadata
+- Participant links grant access only to the session identified by the ID in the URL; they provide no pathway to researcher-protected routes (`/studies`)
+
 ### 5.3 Phase A — Pairwise Comparisons
 
 #### FR-PA-01: Present All 15 Pairs
 
+**Status:** ✅ Done
 **Description:** The app presents all 15 pairwise combinations of the 6 subscales, one at a time.  
 **Source:** "Fifteen comparisons would be required to decide which member of each pair of the six factors was most significant in creating the level of workload experienced in performing a particular task." **[H&S p.170]**  
 **Acceptance Criteria:**
@@ -318,6 +369,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-PA-02: Randomise Pair Order
 
+**Status:** ✅ Done
 **Description:** The order in which the 15 pairs are presented is randomised per session.  
 **Source:** "All possible pairs (n=36) of the nine factors were presented in a different random order to each subject." **[H&S p.148]** (the principle of randomisation carries forward to the six-subscale version)  
 **Acceptance Criteria:**
@@ -328,6 +380,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-PA-03: Display Subscale Descriptions During Comparison
 
+**Status:** ✅ Done
 **Description:** Each subscale in a pair is shown with its full label and descriptive text, not just its acronym.  
 **Source:** Full descriptions are specified in Figure 8 **[H&S p.169]** to ensure participants understand each dimension.  
 **Acceptance Criteria:**
@@ -338,6 +391,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-PA-04: Progress Indicator
 
+**Status:** ✅ Done
 **Description:** A progress indicator shows how many of the 15 comparisons have been completed.  
 **Acceptance Criteria:**
 
@@ -346,6 +400,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-PA-05: No Back Navigation During Phase A
 
+**Status:** ✅ Done
 **Description:** Once a pairwise comparison is submitted, the participant cannot change it.  
 **Source:** Prevents rationalisation of earlier choices based on later pairs, consistent with the pairwise paradigm's independence assumption **[H&S p.148]**.  
 **Acceptance Criteria:**
@@ -357,6 +412,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-PB-01: Present All 6 Subscales for Rating
 
+**Status:** ✅ Done
 **Description:** The participant rates each of the 6 subscales on a continuous scale.  
 **Source:** Six subscales as finalised in Figure 8 **[H&S p.169]**.  
 **Acceptance Criteria:**
@@ -367,6 +423,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-PB-02: Continuous Slider — No Numeric Display
 
+**Status:** ✅ Done
 **Description:** Each subscale is rated using a continuous horizontal slider. No numerical value is shown to the participant.  
 **Source:** "…graphic scales, represented by an unmarked continuum bounded by extreme anchor values, are preferable." and "Numerical values were not displayed, but values ranging from 1 to 100 were assigned to scale positions during data analysis." **[H&S pp.148, 170–171]**  
 **Acceptance Criteria:**
@@ -378,6 +435,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-PB-03: Endpoint Labels Match the Paper
 
+**Status:** ✅ Done
 **Description:** Bipolar endpoint labels must match those specified in Figure 8 of the paper.  
 **Source:** Figure 8, **[H&S p.169]**  
 **Acceptance Criteria:**
@@ -395,6 +453,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-PB-04: Default Slider Position
 
+**Status:** ✅ Done
 **Description:** The slider has no default pre-selected position. It must require an explicit gesture from the participant before being considered answered.  
 **Source:** Implicit from the graphical rating procedure — a value is only assigned when the participant marks a position **[H&S p.148]**.  
 **Acceptance Criteria:**
@@ -405,6 +464,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-PB-05: Subscale Order Randomisation
 
+**Status:** ✅ Done
 **Description:** The order in which the 6 subscales are presented for rating is randomised per session.  
 **Source:** Consistent with counterbalancing practices in the original experiments to avoid order effects **[H&S p.148]**.  
 **Acceptance Criteria:**
@@ -414,6 +474,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-PB-06: Subscale Descriptions Visible During Rating
 
+**Status:** ✅ Done
 **Description:** The full description of a subscale is shown while the participant rates it.  
 **Source:** Figure 8 descriptions **[H&S p.169]** ensure the participant understands what they are rating.  
 **Acceptance Criteria:**
@@ -425,6 +486,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-SC-01: Automatic Weight Computation
 
+**Status:** ✅ Done
 **Description:** After Phase A, the app computes each subscale's weight as the count of times it was selected across the 15 pairs.  
 **Source:** "The member of each pair selected as most relevant to workload was recorded and the number of times each factor was selected was computed. The resulting values could range from 0 (not relevant) to 8 (more important than any other factor)." — for the 9-factor version; for 6 factors, the range is 0–5. **[H&S p.148]**  
 **Acceptance Criteria:**
@@ -435,6 +497,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-SC-02: Weighted TLX Score Computation
 
+**Status:** ✅ Done
 **Description:** The app computes the weighted TLX score (WWL) from weights and ratings.  
 **Source:** Formula derived from **[H&S pp.148, 152, 170]**  
 **Acceptance Criteria:**
@@ -446,6 +509,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-SC-03: Raw TLX Score Computation
 
+**Status:** ✅ Done
 **Description:** The app also computes and stores the unweighted mean of all 6 subscale ratings.  
 **Source:** Equal-weighting scheme discussed as intermediate option **[H&S p.152]**  
 **Acceptance Criteria:**
@@ -456,6 +520,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-SC-04: Session Completion Confirmation
 
+**Status:** ✅ Done
 **Description:** A clear confirmation screen is shown when both phases are complete.  
 **Acceptance Criteria:**
 
@@ -468,6 +533,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-RE-01: Study-Level Results View
 
+**Status:** ✅ Done
 **Description:** A researcher can view aggregated results across all sessions in a study.  
 **Acceptance Criteria:**
 
@@ -477,6 +543,7 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-RE-02: Session-Level Results View
 
+**Status:** ✅ Done
 **Description:** A researcher can view full detail for any individual session.  
 **Acceptance Criteria:**
 
@@ -486,12 +553,41 @@ Note: **Performance** is the only subscale with non-symmetric endpoints (Good �
 
 #### FR-RE-03: CSV Export
 
+**Status:** ✅ Done
 **Description:** A researcher can export session data in CSV format.  
 **Acceptance Criteria:**
 
 - One row per session in the wide-format export
 - Columns: `session_id`, `participant_code`, `task_label`, `started_at`, `completed_at`, `weight_md`, `weight_pd`, `weight_td`, `weight_op`, `weight_ef`, `weight_fr`, `rating_md`, `rating_pd`, `rating_td`, `rating_op`, `rating_ef`, `rating_fr`, `weighted_tlx`, `raw_tlx`
 - Export is downloadable as `.csv`
+
+### 5.7 Authentication
+
+#### FR-AU-01: Researcher Route Authentication
+
+**Status:** 🔲 Planned
+**Description:** All researcher-facing routes are protected by HTTP Basic Authentication. Only an authenticated researcher can access study management and results.
+**Acceptance Criteria:**
+
+- The following route prefixes require valid Basic Auth credentials to access:
+  - `/` (study list / home)
+  - `/studies/*` (all study management, participant management, results)
+- Credentials are configured via environment variables: `AUTH_USERNAME` and `AUTH_PASSWORD`
+- No user database is required for this iteration — a single shared researcher credential is sufficient
+- Unauthenticated requests to protected routes receive a `401 Unauthorized` response with a `WWW-Authenticate: Basic realm="Researcher Portal"` header, triggering the browser's native credential dialog
+- Credentials are validated on the server side (HTTP middleware or `beforeLoad` guard); client-side-only checks are not sufficient
+- Session links (`/session/*`) are explicitly excluded from the auth requirement (see FR-AU-02)
+
+#### FR-AU-02: Participant Route Isolation
+
+**Status:** 🔲 Planned
+**Description:** Participant-facing session routes are publicly accessible without authentication, and provide no pathway to researcher-protected routes.
+**Acceptance Criteria:**
+
+- Routes under `/session/*` do not require Basic Auth credentials
+- No navigation element, link, or redirect on any `/session/*` page leads to `/studies` or any other protected route
+- A participant who manually navigates to `/studies` (e.g., by editing the URL) receives the standard `401` browser credential prompt — they are not silently granted access
+- The `/session/$sessionId/start` landing page (FR-SI-04) contains only: task label, collection mode indicator, language selector, and a "Begin" button — no researcher metadata or links
 
 ---
 
