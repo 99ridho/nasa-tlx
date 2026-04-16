@@ -1,209 +1,147 @@
-Welcome to your new TanStack Start app!
+# NASA-TLX
 
-# Getting Started
+A full-stack web application for conducting [NASA Task Load Index (NASA-TLX)](https://humansystems.arc.nasa.gov/groups/tlx/) cognitive workload studies. Supports multi-participant sessions, bilingual UI (English / Indonesian), and CSV data export.
 
-To run this application:
+## What it does
+
+**Researchers** create studies, register participants, and generate per-participant session URLs. After data collection they view aggregated results and export raw data as CSV.
+
+**Participants** complete a two-phase instrument:
+
+- **Phase A — Pairwise comparisons** (15 pairs, all C(6,2) combinations, randomised order): determines each subscale's weight for that participant
+- **Phase B — Subscale ratings** (six 0–100 sliders, 5-point steps, randomised order): captures subjective ratings on the six NASA-TLX dimensions
+
+The app then computes a **Weighted TLX** score (`Σ(rating × weight) / 15`) and a **Raw TLX** score (`mean of six ratings`) per session.
+
+### The six subscales
+
+| Code | Name             | Low endpoint | High endpoint |
+|------|------------------|--------------|---------------|
+| MD   | Mental Demand    | Low          | High          |
+| PD   | Physical Demand  | Low          | High          |
+| TD   | Temporal Demand  | Low          | High          |
+| OP   | Own Performance  | Good         | Poor          |
+| EF   | Effort           | Low          | High          |
+| FR   | Frustration      | Low          | High          |
+
+> Own Performance (OP) has reversed semantics — Good = low workload, Poor = high workload.
+
+## Tech stack
+
+| Layer       | Technology                           |
+|-------------|--------------------------------------|
+| Framework   | TanStack Start (SSR, file-based routing) |
+| UI          | React 19, shadcn/ui, Tailwind CSS 4  |
+| Data        | TanStack Query                       |
+| Database    | PostgreSQL + Drizzle ORM             |
+| i18n        | i18next + react-i18next (EN / ID)    |
+| Auth        | JWT cookies via JOSE                 |
+| Testing     | Vitest                               |
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 20+
+- A running PostgreSQL instance
+- Set `DATABASE_URL` in your environment (e.g. `postgresql://user:pass@localhost/nasa_tlx`)
+
+### Install and run
 
 ```bash
 npm install
-npm run dev
+npm run db:migrate   # apply pending migrations
+npm run dev          # development server on http://localhost:3000
 ```
 
-# Building For Production
-
-To build this application for production:
+### Production build
 
 ```bash
 npm run build
+npm run preview
 ```
 
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+## Available scripts
 
 ```bash
-npm run test
+npm run dev          # development server
+npm run build        # production build
+npm run preview      # preview production build
+npm run test         # vitest run
+npm run lint         # eslint
+npm run check        # prettier --write + eslint --fix
+npm run db:generate  # generate migration files from schema changes
+npm run db:migrate   # run pending migrations
+npm run db:push      # push schema directly (dev only)
+npm run db:studio    # open Drizzle Studio (local DB browser)
 ```
 
-## Styling
+## Project structure
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-## Linting & Formatting
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
-
-```bash
-npm run lint
-npm run format
-npm run check
+```
+src/
+├── components/          # Shared UI components (Header, ThemeToggle, TLXSlider, …)
+│   └── ui/              # shadcn/ui primitives
+├── db/
+│   ├── schema.ts        # Drizzle ORM schema (all tables & enums)
+│   └── index.ts         # DB client
+├── hooks/               # usePairwiseMutation, useRatingMutation
+├── lib/
+│   ├── tlx-constants.ts # Subscale definitions, pair generation
+│   ├── i18n.ts          # i18next setup
+│   ├── query-keys.ts    # TanStack Query key factory
+│   └── utils.ts
+├── locales/
+│   ├── en/              # English translations
+│   └── id/              # Indonesian translations
+├── routes/
+│   ├── __root.tsx
+│   ├── login.tsx
+│   ├── studies/         # Researcher routes: list, create, edit, participants, sessions
+│   └── session/
+│       └── $sessionId/
+│           ├── start.tsx
+│           ├── phase-a/$pairIndex.tsx     # 15 pairwise comparison screens
+│           ├── phase-b/$subscaleIndex.tsx # 6 rating screens
+│           └── complete.tsx
+├── server/              # Server functions (auth, CRUD, scoring, CSV export)
+└── types/
+    └── domain.ts        # Shared TypeScript domain types
 ```
 
-## Shadcn
+## Database schema
 
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+Five tables managed by Drizzle ORM:
 
-```bash
-pnpm dlx shadcn@latest add button
-```
+| Table                  | Description                                              |
+|------------------------|----------------------------------------------------------|
+| `studies`              | Researcher-created studies with task description         |
+| `participants`         | Participants linked to a study, identified by a code     |
+| `sessions`             | One per participant attempt; tracks status & randomisation state |
+| `pairwise_comparisons` | 15 rows per session (Phase A responses)                  |
+| `subscale_ratings`     | 6 rows per session (Phase B responses)                   |
+| `tlx_scores`           | Computed weighted & raw TLX per session                  |
 
-## Routing
+Sessions store `pairOrder`, `subscaleOrder`, and `sideOrder` as JSONB arrays so each participant sees a fully randomised but reproducible presentation.
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+## Authentication
 
-### Adding A Route
+Researcher routes (`/studies/*`) are protected by JWT cookie auth. Log in at `/login`; the token is issued as an `HttpOnly` cookie and validated server-side on every researcher route.
 
-To add a new route to your application just add a new file in the `./src/routes` directory.
+Participant session routes (`/session/*`) are intentionally unauthenticated — participants access their session via a direct URL generated by the researcher.
 
-TanStack will automatically generate the content of the route file for you.
+## Domain constraints (methodology)
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+These are hard requirements from the original Hart & Staveland (1988) instrument and are not configurable:
 
-### Adding Links
+- Exactly **15 pairwise pairs** — all C(6,2) combinations of the six subscales
+- Weights must sum to **exactly 15** (one point per pair)
+- Slider range **0–100**, increments of **5** only
+- **No numeric display** to participants during rating
+- **No back-navigation** during Phase A or Phase B once started
+- **Random pair order** per session (not per study)
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+## Authoritative references
 
-```tsx
-import { Link } from '@tanstack/react-router'
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- `PRD.md` — product requirements (FR-SM-01 through FR-RE-03, 18 requirements)
+- `hart-staveland-original-1.pdf` — original 1988 methodology paper
