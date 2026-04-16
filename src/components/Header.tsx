@@ -16,7 +16,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
-      <nav className="mx-auto flex h-14 max-w-screen-lg items-center gap-6 px-4">
+      <nav className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
         <Link
           to="/studies"
           className="font-semibold text-sm text-foreground no-underline"

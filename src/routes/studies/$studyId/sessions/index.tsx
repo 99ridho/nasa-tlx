@@ -29,7 +29,11 @@ import {
   DialogTitle,
   DialogFooter,
 } from '#/components/ui/dialog'
-import type { CollectionMode, SessionWithRelations, BatchSessionResult } from '#/types/domain'
+import type {
+  CollectionMode,
+  SessionWithRelations,
+  BatchSessionResult,
+} from '#/types/domain'
 
 export const Route = createFileRoute('/studies/$studyId/sessions/')({
   loader: async ({ params }) => {
@@ -68,10 +72,13 @@ function SessionsComponent() {
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
-  const [collectionMode, setCollectionMode] = useState<CollectionMode>('weighted')
+  const [collectionMode, setCollectionMode] =
+    useState<CollectionMode>('weighted')
   const [isStarting, setIsStarting] = useState(false)
   const [startError, setStartError] = useState<string | null>(null)
-  const [batchResults, setBatchResults] = useState<BatchSessionResult['sessions'] | null>(null)
+  const [batchResults, setBatchResults] = useState<
+    BatchSessionResult['sessions'] | null
+  >(null)
 
   // Participants that already have an in_progress session
   const inProgressParticipantIds = new Set(
@@ -159,7 +166,7 @@ function SessionsComponent() {
   return (
     <main className="page-wrap px-4 pb-8 pt-8 max-w-5xl mx-auto">
       <div className="flex items-center gap-3 mb-4">
-        <Button asChild variant="outline" className="min-h-[44px]">
+        <Button asChild variant="outline" className="min-h-11">
           <Link to="/studies/$studyId" params={{ studyId: study.id }}>
             {t('common.back')}
           </Link>
@@ -194,7 +201,7 @@ function SessionsComponent() {
       )}
 
       <div className="flex justify-end mb-4">
-        <Button onClick={() => setDialogOpen(true)} className="min-h-[44px]">
+        <Button onClick={() => setDialogOpen(true)} className="min-h-11">
           {t('session.batchCreate')}
         </Button>
       </div>
@@ -211,8 +218,6 @@ function SessionsComponent() {
                 <TableHead>{t('participant.code')}</TableHead>
                 <TableHead>{t('common.status')}</TableHead>
                 <TableHead>{t('common.mode')}</TableHead>
-                <TableHead>{t('session.complete.weightedTLX')}</TableHead>
-                <TableHead>{t('session.complete.rawTLX')}</TableHead>
                 <TableHead>{t('common.completed')}</TableHead>
                 <TableHead></TableHead>
               </TableRow>
@@ -229,8 +234,6 @@ function SessionsComponent() {
                   <TableCell>
                     <Badge variant="outline">{session.collectionMode}</Badge>
                   </TableCell>
-                  <TableCell>—</TableCell>
-                  <TableCell>—</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {session.completedAt
                       ? new Date(session.completedAt).toLocaleDateString()
@@ -241,7 +244,7 @@ function SessionsComponent() {
                       asChild
                       variant="ghost"
                       size="sm"
-                      className="min-h-[44px]"
+                      className="min-h-11"
                     >
                       <Link
                         to="/studies/$studyId/sessions/$sessionId"
@@ -258,11 +261,18 @@ function SessionsComponent() {
         </div>
       )}
 
-      <Dialog open={dialogOpen} onOpenChange={(open) => { if (!open) closeDialog() }}>
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) closeDialog()
+        }}
+      >
         <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {batchResults ? t('session.sessionLinks') : t('session.batchCreate')}
+              {batchResults
+                ? t('session.sessionLinks')
+                : t('session.batchCreate')}
             </DialogTitle>
           </DialogHeader>
 
@@ -313,17 +323,21 @@ function SessionsComponent() {
                     <div className="flex gap-2">
                       <Button
                         type="button"
-                        variant={collectionMode === 'weighted' ? 'default' : 'outline'}
+                        variant={
+                          collectionMode === 'weighted' ? 'default' : 'outline'
+                        }
                         onClick={() => setCollectionMode('weighted')}
-                        className="min-h-[44px] flex-1"
+                        className="min-h-11 flex-1"
                       >
                         {t('session.weightedTLXMode')}
                       </Button>
                       <Button
                         type="button"
-                        variant={collectionMode === 'raw_only' ? 'default' : 'outline'}
+                        variant={
+                          collectionMode === 'raw_only' ? 'default' : 'outline'
+                        }
                         onClick={() => setCollectionMode('raw_only')}
-                        className="min-h-[44px] flex-1"
+                        className="min-h-11 flex-1"
                       >
                         {t('session.rawTLXOnly')}
                       </Button>
@@ -340,14 +354,18 @@ function SessionsComponent() {
                 <Button
                   variant="outline"
                   onClick={closeDialog}
-                  className="min-h-[44px]"
+                  className="min-h-11"
                 >
                   {t('common.cancel')}
                 </Button>
                 <Button
                   onClick={handleCreateSessions}
-                  disabled={isStarting || selectedIds.size === 0 || eligibleParticipants.length === 0}
-                  className="min-h-[44px]"
+                  disabled={
+                    isStarting ||
+                    selectedIds.size === 0 ||
+                    eligibleParticipants.length === 0
+                  }
+                  className="min-h-11"
                 >
                   {isStarting ? t('common.loading') : t('session.batchCreate')}
                 </Button>
@@ -384,7 +402,7 @@ function SessionsComponent() {
                 <Button
                   variant="outline"
                   onClick={copyAll}
-                  className="min-h-[44px]"
+                  className="min-h-11"
                 >
                   {t('session.copyAll')}
                 </Button>
@@ -393,7 +411,7 @@ function SessionsComponent() {
                     router.invalidate()
                     closeDialog()
                   }}
-                  className="min-h-[44px]"
+                  className="min-h-11"
                 >
                   {t('common.done')}
                 </Button>

@@ -68,7 +68,7 @@ function SessionDetailComponent() {
   return (
     <main className="page-wrap px-4 pb-8 pt-8 max-w-4xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Button asChild variant="outline" className="min-h-[44px]">
+        <Button asChild variant="outline" className="min-h-11">
           <Link
             to="/studies/$studyId/sessions"
             params={{ studyId: session.studyId }}

@@ -51,19 +51,19 @@ function StudyDetailComponent() {
   return (
     <main className="page-wrap px-4 pb-8 pt-8 max-w-4xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Button asChild variant="outline" className="min-h-[44px]">
+        <Button asChild variant="outline" className="min-h-11">
           <Link to="/studies">{t('common.back')}</Link>
         </Button>
         <h1 className="text-2xl font-bold">{study.name}</h1>
         <div className="ml-auto flex gap-2">
-          <Button asChild variant="outline" className="min-h-[44px]">
+          <Button asChild variant="outline" className="min-h-11">
             <Link to="/studies/$studyId/edit" params={{ studyId: study.id }}>
               {t('study.edit')}
             </Link>
           </Button>
           <Button
             variant="destructive"
-            className="min-h-[44px]"
+            className="min-h-11"
             onClick={() => setDeleteDialogOpen(true)}
           >
             {t('study.delete')}
@@ -174,7 +174,7 @@ function StudyDetailComponent() {
                 value={deleteConfirmName}
                 onChange={(e) => setDeleteConfirmName(e.target.value)}
                 placeholder={study.name}
-                className="min-h-[44px]"
+                className="min-h-11"
               />
             </div>
           </div>
@@ -185,7 +185,7 @@ function StudyDetailComponent() {
                 setDeleteDialogOpen(false)
                 setDeleteConfirmName('')
               }}
-              className="min-h-[44px]"
+              className="min-h-11"
             >
               {t('common.cancel')}
             </Button>
@@ -193,7 +193,7 @@ function StudyDetailComponent() {
               variant="destructive"
               onClick={handleDelete}
               disabled={deleteConfirmName !== study.name || isDeleting}
-              className="min-h-[44px]"
+              className="min-h-11"
             >
               {isDeleting ? t('common.loading') : t('study.delete')}
             </Button>

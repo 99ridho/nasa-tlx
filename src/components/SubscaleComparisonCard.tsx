@@ -28,7 +28,7 @@ export function SubscaleComparisonCard({
         }
       }}
       className={[
-        'min-h-[72px] w-full cursor-pointer transition-all select-none',
+        'min-h-18 w-full cursor-pointer transition-all select-none',
         'hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         isSelected
           ? 'ring-2 ring-primary bg-primary/5 border-primary'
@@ -38,7 +38,7 @@ export function SubscaleComparisonCard({
         .filter(Boolean)
         .join(' ')}
     >
-      <CardContent className="flex flex-col justify-center h-full py-4 px-4 min-h-[72px]">
+      <CardContent className="flex flex-col justify-center h-full py-4 px-4 min-h-18">
         <p className="font-semibold text-base leading-tight">{name}</p>
         <p className="text-sm text-muted-foreground mt-1 line-clamp-3">
           {description}

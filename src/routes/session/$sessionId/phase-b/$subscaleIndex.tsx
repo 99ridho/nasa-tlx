@@ -121,7 +121,7 @@ function PhaseBComponent() {
           <Button
             onClick={handleNext}
             disabled={!hasInteracted || mutation.isPending}
-            className="w-full min-h-[44px]"
+            className="w-full min-h-11"
           >
             {mutation.isPending ? t('common.loading') : t('common.next')}
           </Button>

@@ -79,7 +79,7 @@ function NewStudyComponent() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t('study.namePlaceholder')}
                 aria-describedby={errors.name ? 'name-error' : undefined}
-                className="min-h-[44px]"
+                className="min-h-11"
               />
               {errors.name && (
                 <p id="name-error" className="text-sm text-destructive">
@@ -98,7 +98,7 @@ function NewStudyComponent() {
                 aria-describedby={
                   errors.taskLabel ? 'taskLabel-error' : undefined
                 }
-                className="min-h-[44px]"
+                className="min-h-11"
               />
               {errors.taskLabel && (
                 <p id="taskLabel-error" className="text-sm text-destructive">
@@ -128,7 +128,7 @@ function NewStudyComponent() {
                 aria-describedby={
                   errors.createdBy ? 'createdBy-error' : undefined
                 }
-                className="min-h-[44px]"
+                className="min-h-11"
               />
               {errors.createdBy && (
                 <p id="createdBy-error" className="text-sm text-destructive">
@@ -141,11 +141,11 @@ function NewStudyComponent() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="min-h-[44px]"
+                className="min-h-11"
               >
                 {isSubmitting ? t('common.loading') : t('common.save')}
               </Button>
-              <Button asChild variant="outline" className="min-h-[44px]">
+              <Button asChild variant="outline" className="min-h-11">
                 <Link to="/studies">{t('common.cancel')}</Link>
               </Button>
             </div>
