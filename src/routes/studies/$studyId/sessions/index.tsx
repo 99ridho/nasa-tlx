@@ -118,7 +118,7 @@ function SessionsComponent() {
 
   async function handleCreateSessions() {
     if (selectedIds.size === 0) {
-      setStartError('Please select at least one participant')
+      setStartError(t('session.selectAtLeastOne'))
       return
     }
     setIsStarting(true)
@@ -133,7 +133,7 @@ function SessionsComponent() {
       })
       setBatchResults(result.sessions)
     } catch {
-      setStartError('Failed to create sessions. Please try again.')
+      setStartError(t('session.createFailed'))
     } finally {
       setIsStarting(false)
     }
@@ -201,7 +201,7 @@ function SessionsComponent() {
 
       {sessions.length === 0 ? (
         <p className="text-center text-muted-foreground py-8">
-          No sessions yet.
+          {t('session.noSessions')}
         </p>
       ) : (
         <div className="overflow-x-auto">
@@ -209,11 +209,11 @@ function SessionsComponent() {
             <TableHeader>
               <TableRow>
                 <TableHead>{t('participant.code')}</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Mode</TableHead>
+                <TableHead>{t('common.status')}</TableHead>
+                <TableHead>{t('common.mode')}</TableHead>
                 <TableHead>{t('session.complete.weightedTLX')}</TableHead>
                 <TableHead>{t('session.complete.rawTLX')}</TableHead>
-                <TableHead>Completed</TableHead>
+                <TableHead>{t('common.completed')}</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -247,7 +247,7 @@ function SessionsComponent() {
                         to="/studies/$studyId/sessions/$sessionId"
                         params={{ studyId: study.id, sessionId: session.id }}
                       >
-                        View
+                        {t('common.view')}
                       </Link>
                     </Button>
                   </TableCell>
@@ -277,7 +277,7 @@ function SessionsComponent() {
                 <>
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <Label>Participants</Label>
+                      <Label>{t('common.participants')}</Label>
                       <Button
                         type="button"
                         variant="ghost"
@@ -309,7 +309,7 @@ function SessionsComponent() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label>Collection Mode</Label>
+                    <Label>{t('session.collectionMode')}</Label>
                     <div className="flex gap-2">
                       <Button
                         type="button"
@@ -317,7 +317,7 @@ function SessionsComponent() {
                         onClick={() => setCollectionMode('weighted')}
                         className="min-h-[44px] flex-1"
                       >
-                        Weighted TLX
+                        {t('session.weightedTLXMode')}
                       </Button>
                       <Button
                         type="button"
@@ -325,7 +325,7 @@ function SessionsComponent() {
                         onClick={() => setCollectionMode('raw_only')}
                         className="min-h-[44px] flex-1"
                       >
-                        Raw TLX Only
+                        {t('session.rawTLXOnly')}
                       </Button>
                     </div>
                   </div>
@@ -395,7 +395,7 @@ function SessionsComponent() {
                   }}
                   className="min-h-[44px]"
                 >
-                  Done
+                  {t('common.done')}
                 </Button>
               </DialogFooter>
             </div>

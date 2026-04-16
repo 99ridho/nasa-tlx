@@ -74,7 +74,7 @@ function StudyDetailComponent() {
       <div className="grid gap-4 mb-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Study Information</CardTitle>
+            <CardTitle className="text-base">{t('study.information')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center gap-2">
@@ -115,7 +115,7 @@ function StudyDetailComponent() {
                 <div className="text-3xl mb-2">👥</div>
                 <h2 className="font-semibold">{t('study.participants')}</h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Manage study participants
+                  {t('study.manageParticipants')}
                 </p>
               </Link>
             </CardContent>
@@ -131,7 +131,7 @@ function StudyDetailComponent() {
                 <div className="text-3xl mb-2">📋</div>
                 <h2 className="font-semibold">{t('study.sessions')}</h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  View and start sessions
+                  {t('study.viewSessions')}
                 </p>
               </Link>
             </CardContent>

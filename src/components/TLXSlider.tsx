@@ -1,5 +1,4 @@
 import { Slider } from '#/components/ui/slider'
-import { useState } from 'react'
 
 interface TLXSliderProps {
   value: number | null

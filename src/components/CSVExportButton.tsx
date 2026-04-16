@@ -1,6 +1,7 @@
 import { Button } from '#/components/ui/button'
 import { getStudySessionsExport, generateCSV } from '#/server/export'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface CSVExportButtonProps {
   studyId: string
@@ -8,6 +9,7 @@ interface CSVExportButtonProps {
 
 export function CSVExportButton({ studyId }: CSVExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false)
+  const { t } = useTranslation()
 
   async function handleExport() {
     setIsExporting(true)
@@ -28,7 +30,7 @@ export function CSVExportButton({ studyId }: CSVExportButtonProps) {
 
   return (
     <Button onClick={handleExport} variant="outline" className="min-h-11" disabled={isExporting}>
-      {isExporting ? 'Exporting…' : 'Export CSV'}
+      {isExporting ? t('study.exporting') : t('study.export')}
     </Button>
   )
 }

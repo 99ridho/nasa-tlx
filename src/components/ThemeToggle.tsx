@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '#/components/ui/button'
 
 type ThemeMode = 'light' | 'dark' | 'auto'
@@ -34,6 +35,7 @@ function applyThemeMode(mode: ThemeMode) {
 
 export default function ThemeToggle() {
   const [mode, setMode] = useState<ThemeMode>('auto')
+  const { t } = useTranslation()
 
   useEffect(() => {
     const initialMode = getInitialMode()
@@ -65,8 +67,8 @@ export default function ThemeToggle() {
 
   const label =
     mode === 'auto'
-      ? 'Theme mode: auto (system). Click to switch to light mode.'
-      : `Theme mode: ${mode}. Click to switch mode.`
+      ? t('theme.labelAuto')
+      : t('theme.labelMode', { mode: t(`theme.${mode}`) })
 
   return (
     <Button
@@ -76,7 +78,7 @@ export default function ThemeToggle() {
       aria-label={label}
       title={label}
     >
-      {mode === 'auto' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light'}
+      {mode === 'auto' ? t('theme.auto') : mode === 'dark' ? t('theme.dark') : t('theme.light')}
     </Button>
   )
 }

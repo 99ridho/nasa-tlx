@@ -23,7 +23,7 @@ export function ProgressIndicator({
       <Progress
         value={percentage}
         className="h-2"
-        aria-label={`Progress: ${current} of ${total}`}
+        aria-label={label ?? `${current} / ${total}`}
       />
     </div>
   )

@@ -5,7 +5,8 @@
   },
   "nav": {
     "studies": "Studies",
-    "home": "Home"
+    "home": "Home",
+    "logout": "Logout"
   },
   "subscale": {
     "MD": {
@@ -59,6 +60,19 @@
   },
   "session": {
     "taskLabel": "Task",
+    "noSessions": "No sessions yet.",
+    "detail": "Session Detail",
+    "information": "Session Information",
+    "started": "Started",
+    "participantLink": "Participant Link",
+    "copied": "Copied!",
+    "tlxScores": "TLX Scores",
+    "phaseAHeading": "Pairwise Comparisons (Phase A)",
+    "collectionMode": "Collection Mode",
+    "weightedTLXMode": "Weighted TLX",
+    "rawTLXOnly": "Raw TLX Only",
+    "selectAtLeastOne": "Please select at least one participant",
+    "createFailed": "Failed to create sessions. Please try again.",
     "complete": {
       "title": "Session Complete",
       "weightedTLX": "Weighted TLX Score",
@@ -67,7 +81,8 @@
       "ratingSummary": "Subscale Ratings",
       "notes": "Researcher Notes",
       "notesPlaceholder": "Add notes about this session...",
-      "done": "Done"
+      "done": "Done",
+      "closingMessage": "Your responses have been recorded. You may close this window."
     },
     "start": {
       "title": "Session Ready",
@@ -108,7 +123,11 @@
     "noStudies": "No studies yet. Create your first study.",
     "participants": "Participants",
     "sessions": "Sessions",
-    "export": "Export CSV"
+    "export": "Export CSV",
+    "exporting": "Exporting…",
+    "information": "Study Information",
+    "manageParticipants": "Manage study participants",
+    "viewSessions": "View and start sessions"
   },
   "participant": {
     "code": "Participant Code",
@@ -116,6 +135,26 @@
     "add": "Add Participant",
     "noParticipants": "No participants yet.",
     "deleteConfirm": "Remove this participant?"
+  },
+  "login": {
+    "subtitle": "Researcher Portal",
+    "username": "Username",
+    "password": "Password",
+    "signingIn": "Signing in…",
+    "signIn": "Sign in",
+    "invalidCredentials": "Invalid username or password."
+  },
+  "theme": {
+    "auto": "Auto",
+    "dark": "Dark",
+    "light": "Light",
+    "labelAuto": "Theme mode: auto (system). Click to switch to light mode.",
+    "labelMode": "Theme mode: {{mode}}. Click to switch mode."
+  },
+  "language": {
+    "switchTo": "Switch to {{lang}}",
+    "english": "English",
+    "indonesian": "Indonesian"
   },
   "errors": {
     "required": "This field is required",
@@ -134,6 +173,20 @@
     "loading": "Loading...",
     "next": "Next",
     "submit": "Submit",
-    "language": "Language"
+    "language": "Language",
+    "status": "Status",
+    "mode": "Mode",
+    "completed": "Completed",
+    "view": "View",
+    "done": "Done",
+    "subscale": "Subscale",
+    "weight": "Weight",
+    "rating": "Rating",
+    "number": "#",
+    "subscaleA": "Subscale A",
+    "subscaleB": "Subscale B",
+    "selected": "Selected",
+    "time": "Time",
+    "participants": "Participants"
   }
 }

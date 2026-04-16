@@ -116,8 +116,8 @@ function CompleteComponent() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Subscale</TableHead>
-                    <TableHead className="text-right">Weight</TableHead>
+                    <TableHead>{t('common.subscale')}</TableHead>
+                    <TableHead className="text-right">{t('common.weight')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -147,8 +147,8 @@ function CompleteComponent() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Subscale</TableHead>
-                <TableHead className="text-right">Rating</TableHead>
+                <TableHead>{t('common.subscale')}</TableHead>
+                <TableHead className="text-right">{t('common.rating')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -187,7 +187,7 @@ function CompleteComponent() {
       </Card>
 
       <p className="text-sm text-muted-foreground text-center">
-        Your responses have been recorded. You may close this window.
+        {t('session.complete.closingMessage')}
       </p>
     </main>
   )

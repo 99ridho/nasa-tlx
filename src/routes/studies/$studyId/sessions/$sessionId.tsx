@@ -76,13 +76,13 @@ function SessionDetailComponent() {
             {t('common.back')}
           </Link>
         </Button>
-        <h1 className="text-2xl font-bold">Session Detail</h1>
+        <h1 className="text-2xl font-bold">{t('session.detail')}</h1>
       </div>
 
       {/* Session Info */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-base">Session Information</CardTitle>
+          <CardTitle className="text-base">{t('session.information')}</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-4 text-sm">
           <div>
@@ -92,7 +92,7 @@ function SessionDetailComponent() {
             </p>
           </div>
           <div>
-            <p className="font-medium">Status</p>
+            <p className="font-medium">{t('common.status')}</p>
             <Badge>{session.status}</Badge>
           </div>
           <div>
@@ -100,18 +100,18 @@ function SessionDetailComponent() {
             <p className="text-muted-foreground">{session.taskLabel}</p>
           </div>
           <div>
-            <p className="font-medium">Mode</p>
+            <p className="font-medium">{t('common.mode')}</p>
             <Badge variant="outline">{session.collectionMode}</Badge>
           </div>
           <div>
-            <p className="font-medium">Started</p>
+            <p className="font-medium">{t('session.started')}</p>
             <p className="text-muted-foreground">
               {new Date(session.startedAt).toLocaleString()}
             </p>
           </div>
           {session.completedAt && (
             <div>
-              <p className="font-medium">Completed</p>
+              <p className="font-medium">{t('common.completed')}</p>
               <p className="text-muted-foreground">
                 {new Date(session.completedAt).toLocaleString()}
               </p>
@@ -119,7 +119,7 @@ function SessionDetailComponent() {
           )}
           {session.status === 'in_progress' && startUrl && (
             <div className="col-span-2">
-              <p className="font-medium mb-1">Participant Link</p>
+              <p className="font-medium mb-1">{t('session.participantLink')}</p>
               <div className="flex items-center gap-2">
                 <p className="font-mono text-xs text-muted-foreground truncate flex-1">
                   {startUrl}
@@ -130,7 +130,7 @@ function SessionDetailComponent() {
                   onClick={copyUrl}
                   className="shrink-0"
                 >
-                  {copied ? 'Copied!' : t('session.copyLink')}
+                  {copied ? t('session.copied') : t('session.copyLink')}
                 </Button>
               </div>
             </div>
@@ -142,7 +142,7 @@ function SessionDetailComponent() {
       {score && (
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-base">TLX Scores</CardTitle>
+            <CardTitle className="text-base">{t('session.tlxScores')}</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4">
             {score.weightedTlx !== null && (
@@ -180,8 +180,8 @@ function SessionDetailComponent() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Subscale</TableHead>
-                    <TableHead className="text-right">Weight</TableHead>
+                    <TableHead>{t('common.subscale')}</TableHead>
+                    <TableHead className="text-right">{t('common.weight')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -210,8 +210,8 @@ function SessionDetailComponent() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Subscale</TableHead>
-                  <TableHead className="text-right">Rating</TableHead>
+                  <TableHead>{t('common.subscale')}</TableHead>
+                  <TableHead className="text-right">{t('common.rating')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -238,7 +238,7 @@ function SessionDetailComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              Pairwise Comparisons (Phase A)
+              {t('session.phaseAHeading')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -246,11 +246,11 @@ function SessionDetailComponent() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>#</TableHead>
-                    <TableHead>Subscale A</TableHead>
-                    <TableHead>Subscale B</TableHead>
-                    <TableHead>Selected</TableHead>
-                    <TableHead>Time</TableHead>
+                    <TableHead>{t('common.number')}</TableHead>
+                    <TableHead>{t('common.subscaleA')}</TableHead>
+                    <TableHead>{t('common.subscaleB')}</TableHead>
+                    <TableHead>{t('common.selected')}</TableHead>
+                    <TableHead>{t('common.time')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

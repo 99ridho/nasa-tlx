@@ -36,7 +36,7 @@ export default function Header() {
           <LanguageSwitcher />
           <ThemeToggle />
           <Button variant="ghost" size="sm" onClick={handleLogout}>
-            Logout
+            {t('nav.logout')}
           </Button>
         </div>
       </nav>

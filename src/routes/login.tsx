@@ -1,5 +1,6 @@
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { loginAction, getAuthStatus } from '#/server/auth'
 
 export const Route = createFileRoute('/login')({
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/login')({
 
 function LoginPage() {
   const router = useRouter()
+  const { t } = useTranslation()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -28,7 +30,7 @@ function LoginPage() {
       await router.navigate({ to: '/studies' })
     } catch (err) {
       if (err instanceof Error && err.message === 'Invalid credentials') {
-        setError('Invalid username or password.')
+        setError(t('login.invalidCredentials'))
       } else {
         throw err
       }
@@ -41,8 +43,8 @@ function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-tight">NASA-TLX</h1>
-          <p className="text-sm text-muted-foreground mt-1">Researcher Portal</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('app.name')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{t('login.subtitle')}</p>
         </div>
 
         <form
@@ -51,7 +53,7 @@ function LoginPage() {
         >
           <div className="space-y-2">
             <label htmlFor="username" className="text-sm font-medium">
-              Username
+              {t('login.username')}
             </label>
             <input
               id="username"
@@ -66,7 +68,7 @@ function LoginPage() {
 
           <div className="space-y-2">
             <label htmlFor="password" className="text-sm font-medium">
-              Password
+              {t('login.password')}
             </label>
             <input
               id="password"
@@ -88,7 +90,7 @@ function LoginPage() {
             disabled={loading}
             className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? 'Signing in…' : 'Sign in'}
+            {loading ? t('login.signingIn') : t('login.signIn')}
           </button>
         </form>
       </div>

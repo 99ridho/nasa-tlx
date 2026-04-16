@@ -58,7 +58,7 @@ function StartComponent() {
           </div>
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-              Mode
+              {t('common.mode')}
             </p>
             <p className="text-sm">
               {session.collectionMode === 'weighted'

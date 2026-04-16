@@ -5,7 +5,8 @@
   },
   "nav": {
     "studies": "Studi",
-    "home": "Beranda"
+    "home": "Beranda",
+    "logout": "Keluar"
   },
   "subscale": {
     "MD": {
@@ -59,6 +60,19 @@
   },
   "session": {
     "taskLabel": "Tugas",
+    "noSessions": "Belum ada sesi.",
+    "detail": "Detail Sesi",
+    "information": "Informasi Sesi",
+    "started": "Dimulai",
+    "participantLink": "Tautan Peserta",
+    "copied": "Tersalin!",
+    "tlxScores": "Skor TLX",
+    "phaseAHeading": "Perbandingan Berpasangan (Fase A)",
+    "collectionMode": "Mode Pengumpulan",
+    "weightedTLXMode": "TLX Berbobot",
+    "rawTLXOnly": "TLX Mentah Saja",
+    "selectAtLeastOne": "Pilih setidaknya satu peserta",
+    "createFailed": "Gagal membuat sesi. Silakan coba lagi.",
     "complete": {
       "title": "Sesi Selesai",
       "weightedTLX": "Skor TLX Berbobot",
@@ -67,7 +81,8 @@
       "ratingSummary": "Penilaian Subskala",
       "notes": "Catatan Peneliti",
       "notesPlaceholder": "Tambahkan catatan tentang sesi ini...",
-      "done": "Selesai"
+      "done": "Selesai",
+      "closingMessage": "Respons Anda telah direkam. Anda dapat menutup jendela ini."
     },
     "start": {
       "title": "Sesi Siap",
@@ -108,7 +123,11 @@
     "noStudies": "Belum ada studi. Buat studi pertama Anda.",
     "participants": "Peserta",
     "sessions": "Sesi",
-    "export": "Ekspor CSV"
+    "export": "Ekspor CSV",
+    "exporting": "Mengekspor…",
+    "information": "Informasi Studi",
+    "manageParticipants": "Kelola peserta studi",
+    "viewSessions": "Lihat dan mulai sesi"
   },
   "participant": {
     "code": "Kode Peserta",
@@ -116,6 +135,26 @@
     "add": "Tambah Peserta",
     "noParticipants": "Belum ada peserta.",
     "deleteConfirm": "Hapus peserta ini?"
+  },
+  "login": {
+    "subtitle": "Portal Peneliti",
+    "username": "Nama Pengguna",
+    "password": "Kata Sandi",
+    "signingIn": "Masuk…",
+    "signIn": "Masuk",
+    "invalidCredentials": "Username atau password salah."
+  },
+  "theme": {
+    "auto": "Otomatis",
+    "dark": "Gelap",
+    "light": "Terang",
+    "labelAuto": "Mode tema: otomatis (sistem). Klik untuk beralih ke mode terang.",
+    "labelMode": "Mode tema: {{mode}}. Klik untuk mengganti mode."
+  },
+  "language": {
+    "switchTo": "Ganti ke {{lang}}",
+    "english": "Inggris",
+    "indonesian": "Indonesia"
   },
   "errors": {
     "required": "Kolom ini wajib diisi",
@@ -134,6 +173,20 @@
     "loading": "Memuat...",
     "next": "Lanjut",
     "submit": "Kirim",
-    "language": "Bahasa"
+    "language": "Bahasa",
+    "status": "Status",
+    "mode": "Mode",
+    "completed": "Selesai",
+    "view": "Lihat",
+    "done": "Selesai",
+    "subscale": "Subskala",
+    "weight": "Bobot",
+    "rating": "Nilai",
+    "number": "#",
+    "subscaleA": "Subskala A",
+    "subscaleB": "Subskala B",
+    "selected": "Dipilih",
+    "time": "Waktu",
+    "participants": "Peserta"
   }
 }

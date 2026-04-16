@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate, notFound } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
 import { getSession } from '#/server/sessions'
 import { getPairwiseComparisons } from '#/server/pairwise'
 import { CANONICAL_PAIRS, SUBSCALE_META } from '#/lib/tlx-constants'
@@ -34,8 +33,6 @@ function PhaseAComponent() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const mutation = usePairwiseMutation(session.id)
-  const [selected, setSelected] = useState<SubscaleCode | null>(null)
-
   // Get the canonical pair index from the session's randomized order
   const canonicalIdx = session.pairOrder[pairIdx]
   const pair = CANONICAL_PAIRS[canonicalIdx]
@@ -53,7 +50,6 @@ function PhaseAComponent() {
 
   async function handleSelect(code: SubscaleCode) {
     if (mutation.isPending || alreadyAnswered) return
-    setSelected(code)
 
     try {
       await mutation.mutateAsync({
@@ -76,7 +72,7 @@ function PhaseAComponent() {
         })
       }
     } catch {
-      setSelected(null)
+      // mutation failed — component will re-enable via isPending resetting
     }
   }
 
