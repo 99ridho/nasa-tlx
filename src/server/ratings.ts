@@ -1,4 +1,5 @@
-import { createServerFn } from '@tanstack/react-start/server'
+'use server'
+import { createServerFn } from '@tanstack/react-start'
 import { eq, and } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { subscaleRatings } from '#/db/schema'

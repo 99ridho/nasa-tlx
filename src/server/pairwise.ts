@@ -1,4 +1,5 @@
-import { createServerFn } from '@tanstack/react-start/server'
+'use server'
+import { createServerFn } from '@tanstack/react-start'
 import { eq, count } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { pairwiseComparisons, sessions } from '#/db/schema'
