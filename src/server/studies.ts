@@ -109,3 +109,10 @@ export const updateStudy = createServerFn()
       updatedAt: row.updatedAt,
     }
   })
+
+export const deleteStudy = createServerFn()
+  .inputValidator((d: { id: string }) => d)
+  .handler(async ({ data }): Promise<{ success: boolean }> => {
+    await db.delete(studies).where(eq(studies.id, data.id))
+    return { success: true }
+  })

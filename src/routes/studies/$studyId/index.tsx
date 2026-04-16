@@ -1,23 +1,52 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router'
+import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { getStudyById } from '#/server/studies'
+import { useState } from 'react'
+import { getStudyById, deleteStudy } from '#/server/studies'
+import { getSessionsByStudy } from '#/server/sessions'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Button } from '#/components/ui/button'
 import { Badge } from '#/components/ui/badge'
+import { Input } from '#/components/ui/input'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '#/components/ui/dialog'
 import { CSVExportButton } from '#/components/CSVExportButton'
 
 export const Route = createFileRoute('/studies/$studyId/')({
   loader: async ({ params }) => {
-    const study = await getStudyById({ data: { id: params.studyId } })
+    const [study, sessions] = await Promise.all([
+      getStudyById({ data: { id: params.studyId } }),
+      getSessionsByStudy({ data: { studyId: params.studyId } }),
+    ])
     if (!study) throw notFound()
-    return { study }
+    const hasInProgressSessions = sessions.some((s) => s.status === 'in_progress')
+    return { study, hasSessions: sessions.length > 0, hasInProgressSessions }
   },
   component: StudyDetailComponent,
 })
 
 function StudyDetailComponent() {
-  const { study } = Route.useLoaderData()
+  const { study, hasInProgressSessions } = Route.useLoaderData()
   const { t } = useTranslation()
+  const navigate = useNavigate()
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deleteConfirmName, setDeleteConfirmName] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  async function handleDelete() {
+    setIsDeleting(true)
+    try {
+      await deleteStudy({ data: { id: study.id } })
+      await navigate({ to: '/studies' })
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   return (
     <main className="page-wrap px-4 pb-8 pt-8 max-w-4xl mx-auto">
@@ -26,6 +55,20 @@ function StudyDetailComponent() {
           <Link to="/studies">{t('common.back')}</Link>
         </Button>
         <h1 className="text-2xl font-bold">{study.name}</h1>
+        <div className="ml-auto flex gap-2">
+          <Button asChild variant="outline" className="min-h-[44px]">
+            <Link to="/studies/$studyId/edit" params={{ studyId: study.id }}>
+              {t('study.edit')}
+            </Link>
+          </Button>
+          <Button
+            variant="destructive"
+            className="min-h-[44px]"
+            onClick={() => setDeleteDialogOpen(true)}
+          >
+            {t('study.delete')}
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 mb-6">
@@ -99,6 +142,64 @@ function StudyDetailComponent() {
           <CSVExportButton studyId={study.id} />
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onOpenChange={(open) => {
+          setDeleteDialogOpen(open)
+          if (!open) setDeleteConfirmName('')
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('study.deleteConfirmTitle')}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <p className="text-sm text-muted-foreground">
+              {t('study.deleteConfirmDescription', { name: study.name })}
+            </p>
+
+            {hasInProgressSessions && (
+              <div className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {t('study.deleteWarningInProgress')}
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <p className="text-sm">
+                {t('study.deleteConfirmPlaceholder', { name: study.name })}
+              </p>
+              <Input
+                value={deleteConfirmName}
+                onChange={(e) => setDeleteConfirmName(e.target.value)}
+                placeholder={study.name}
+                className="min-h-[44px]"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false)
+                setDeleteConfirmName('')
+              }}
+              className="min-h-[44px]"
+            >
+              {t('common.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteConfirmName !== study.name || isDeleting}
+              className="min-h-[44px]"
+            >
+              {isDeleting ? t('common.loading') : t('study.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }
