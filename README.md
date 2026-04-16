@@ -36,7 +36,7 @@ The app then computes a **Weighted TLX** score (`Σ(rating × weight) / 15`) and
 | Database  | PostgreSQL + Drizzle ORM                 |
 | i18n      | i18next + react-i18next (EN / ID)        |
 | Auth      | JWT cookies via JOSE                     |
-| Testing   | Vitest                                   |
+| Testing   | Vitest + Stryker mutation testing        |
 
 ## Getting started
 
@@ -64,49 +64,78 @@ npm run preview
 ## Available scripts
 
 ```bash
-npm run dev          # development server
-npm run build        # production build
-npm run preview      # preview production build
-npm run test         # vitest run
-npm run lint         # eslint
-npm run check        # prettier --write + eslint --fix
-npm run db:generate  # generate migration files from schema changes
-npm run db:migrate   # run pending migrations
-npm run db:push      # push schema directly (dev only)
-npm run db:studio    # open Drizzle Studio (local DB browser)
+npm run dev            # development server
+npm run build          # production build
+npm run preview        # preview production build
+npm run test           # vitest run
+npm run test:mutation  # Stryker mutation testing (targets src/lib/tlx.ts)
+npm run lint           # eslint
+npm run check          # prettier --write + eslint --fix
+npm run db:generate    # generate migration files from schema changes
+npm run db:migrate     # run pending migrations
+npm run db:push        # push schema directly (dev only)
+npm run db:studio      # open Drizzle Studio (local DB browser)
 ```
 
 ## Project structure
 
 ```
 src/
-├── components/          # Shared UI components (Header, ThemeToggle, TLXSlider, …)
-│   └── ui/              # shadcn/ui primitives
+├── components/
+│   ├── Header.tsx
+│   ├── Footer.tsx
+│   ├── ThemeToggle.tsx
+│   ├── LanguageSwitcher.tsx
+│   ├── TLXSlider.tsx                  # 0–100 slider, snaps to 5-point steps
+│   ├── SubscaleComparisonCard.tsx     # Phase A pairwise card
+│   ├── TaskContextBanner.tsx
+│   ├── ProgressIndicator.tsx
+│   ├── CSVExportButton.tsx
+│   └── ui/                            # shadcn/ui primitives
 ├── db/
-│   ├── schema.ts        # Drizzle ORM schema (all tables & enums)
-│   └── index.ts         # DB client
-├── hooks/               # usePairwiseMutation, useRatingMutation
+│   ├── schema.ts                      # Drizzle ORM schema (all tables & enums)
+│   └── index.ts                       # DB client
+├── hooks/
+│   ├── usePairwiseMutation.ts
+│   └── useRatingMutation.ts
 ├── lib/
-│   ├── tlx-constants.ts # Subscale definitions, pair generation
-│   ├── i18n.ts          # i18next setup
-│   ├── query-keys.ts    # TanStack Query key factory
+│   ├── tlx.ts                         # Subscale definitions, pair generation, scoring formulas
+│   ├── i18n.ts                        # i18next setup
+│   ├── query-keys.ts                  # TanStack Query key factory
 │   └── utils.ts
 ├── locales/
-│   ├── en/              # English translations
-│   └── id/              # Indonesian translations
+│   ├── en/                            # English translations
+│   └── id/                            # Indonesian translations
 ├── routes/
 │   ├── __root.tsx
 │   ├── login.tsx
-│   ├── studies/         # Researcher routes: list, create, edit, participants, sessions
+│   ├── studies/                       # Researcher routes: list, create, edit, participants
+│   │   └── $studyId/
+│   │       ├── index.tsx
+│   │       ├── edit.tsx
+│   │       ├── participants.tsx
+│   │       └── sessions/
+│   │           ├── index.tsx          # Aggregated session results
+│   │           └── $sessionId.tsx     # Per-session detail
 │   └── session/
 │       └── $sessionId/
 │           ├── start.tsx
 │           ├── phase-a/$pairIndex.tsx     # 15 pairwise comparison screens
 │           ├── phase-b/$subscaleIndex.tsx # 6 rating screens
 │           └── complete.tsx
-├── server/              # Server functions (auth, CRUD, scoring, CSV export)
+├── server/                            # Server functions
+│   ├── auth.ts
+│   ├── studies.ts
+│   ├── participants.ts
+│   ├── sessions.ts
+│   ├── pairwise.ts
+│   ├── ratings.ts
+│   ├── scores.ts                      # TLX score computation & persistence
+│   ├── results.ts                     # Aggregated result queries
+│   ├── export.ts                      # CSV export
+│   └── validation.ts
 └── types/
-    └── domain.ts        # Shared TypeScript domain types
+    └── domain.ts                      # Shared TypeScript domain types
 ```
 
 ## Database schema
