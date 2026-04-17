@@ -1,6 +1,7 @@
 /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
 const config = {
   testRunner: 'vitest',
+  plugins: ['@stryker-mutator/vitest-runner'],
   mutate: ['src/lib/tlx.ts'],
   coverageAnalysis: 'perTest',
   thresholds: { high: 90, low: 80, break: 70 },
