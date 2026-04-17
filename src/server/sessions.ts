@@ -1,14 +1,8 @@
 'use server'
 import { createServerFn } from '@tanstack/react-start'
-import { eq, max, count, inArray } from 'drizzle-orm'
+import { eq, inArray, sql } from 'drizzle-orm'
 import { db } from '#/db/index'
-import {
-  sessions,
-  studies,
-  participants,
-  pairwiseComparisons,
-  subscaleRatings,
-} from '#/db/schema'
+import { sessions, studies, participants } from '#/db/schema'
 import type {
   CreateSessionInput,
   CreateBatchSessionsInput,
@@ -164,25 +158,23 @@ export const resumeSession = createServerFn()
       lastPairIndex: number | null
       lastSubscaleIndex: number | null
     }> => {
-      const pairResult = (
-        await db
-          .select({ maxIndex: max(pairwiseComparisons.pairIndex) })
-          .from(pairwiseComparisons)
-          .where(eq(pairwiseComparisons.sessionId, data.id))
-      ).at(0)
-
-      const ratingResult = (
-        await db
-          .select({ ratingCount: count() })
-          .from(subscaleRatings)
-          .where(eq(subscaleRatings.sessionId, data.id))
-      ).at(0)
+      const result = await db.execute<{
+        max_pair_index: number | null
+        rating_count: string
+      }>(
+        sql`
+          SELECT
+            (SELECT MAX(pair_index) FROM pairwise_comparisons WHERE session_id = ${data.id}) AS max_pair_index,
+            (SELECT COUNT(1)        FROM subscale_ratings       WHERE session_id = ${data.id}) AS rating_count
+        `,
+      )
+      const row = result.rows[0]
 
       return {
-        lastPairIndex: pairResult?.maxIndex ?? null,
+        lastPairIndex: row.max_pair_index ?? null,
         lastSubscaleIndex:
-          ratingResult && ratingResult.ratingCount > 0
-            ? ratingResult.ratingCount - 1
+          row.rating_count && Number(row.rating_count) > 0
+            ? Number(row.rating_count) - 1
             : null,
       }
     },
@@ -206,36 +198,37 @@ export const createBatchSessions = createServerFn()
       .from(participants)
       .where(inArray(participants.id, data.participantIds))
 
-    const results: BatchSessionResult['sessions'] = []
+    const phaseOrder: PhaseOrder =
+      data.collectionMode === 'raw_only' ? 'ratings_first' : 'comparisons_first'
 
-    for (const p of participantRows) {
-      const pairOrder = shuffleArray([
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-      ])
-      const subscaleOrder = shuffleArray([...SUBSCALE_CODES])
-      const sideOrder = Array.from({ length: 15 }, () => Math.random() < 0.5)
-      const phaseOrder: PhaseOrder =
-        data.collectionMode === 'raw_only'
-          ? 'ratings_first'
-          : 'comparisons_first'
+    const sessionValues = participantRows.map((p) => ({
+      participant: p,
+      values: {
+        studyId: data.studyId,
+        participantId: p.id,
+        taskLabel: study.taskLabel,
+        collectionMode: data.collectionMode,
+        phaseOrder,
+        status: 'in_progress' as const,
+        pairOrder: shuffleArray([
+          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+        ]),
+        subscaleOrder: shuffleArray([...SUBSCALE_CODES]),
+        sideOrder: Array.from({ length: 15 }, () => Math.random() < 0.5),
+      },
+    }))
 
-      const [row] = await db
-        .insert(sessions)
-        .values({
-          studyId: data.studyId,
-          participantId: p.id,
-          taskLabel: study.taskLabel,
-          collectionMode: data.collectionMode,
-          phaseOrder,
-          status: 'in_progress',
-          pairOrder,
-          subscaleOrder,
-          sideOrder,
-        })
-        .returning()
+    const insertedRows = await db
+      .insert(sessions)
+      .values(sessionValues.map((sv) => sv.values))
+      .returning()
 
-      results.push({ participantCode: p.participantCode, sessionId: row.id })
-    }
+    const results: BatchSessionResult['sessions'] = insertedRows.map(
+      (row, i) => ({
+        participantCode: sessionValues[i].participant.participantCode,
+        sessionId: row.id,
+      }),
+    )
 
     return { sessions: results }
   })

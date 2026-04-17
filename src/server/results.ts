@@ -4,7 +4,6 @@ import { eq, avg, count, sql } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { sessions, subscaleRatings, tlxScores } from '#/db/schema'
 import type { StudyResults, SubscaleCode } from '#/types/domain'
-import { SUBSCALE_CODES } from '#/lib/tlx'
 
 export const getStudyResults = createServerFn()
   .inputValidator((d: { studyId: string }) => d)
@@ -33,30 +32,24 @@ export const getStudyResults = createServerFn()
         .where(eq(sessions.studyId, data.studyId))
     ).at(0)
 
-    // Per-subscale rating averages and stddev
-    const subscaleStats: Record<SubscaleCode, { mean: number; sd: number }> =
-      {} as Record<SubscaleCode, { mean: number; sd: number }>
+    // Per-subscale rating averages and stddev (single GROUP BY query)
+    const subscaleRows = await db
+      .select({
+        subscale: subscaleRatings.subscale,
+        mean: avg(subscaleRatings.rawValue),
+        sd: sql<number>`stddev_pop(${subscaleRatings.rawValue})`,
+      })
+      .from(subscaleRatings)
+      .innerJoin(sessions, eq(subscaleRatings.sessionId, sessions.id))
+      .where(eq(sessions.studyId, data.studyId))
+      .groupBy(subscaleRatings.subscale)
 
-    for (const code of SUBSCALE_CODES) {
-      const statResult = (
-        await db
-          .select({
-            mean: avg(subscaleRatings.rawValue),
-            sd: sql<number>`stddev_pop(${subscaleRatings.rawValue})`,
-          })
-          .from(subscaleRatings)
-          .innerJoin(sessions, eq(subscaleRatings.sessionId, sessions.id))
-          .where(eq(sessions.studyId, data.studyId))
-      ).at(0)
-
-      subscaleStats[code] = {
-        mean:
-          statResult?.mean !== null && statResult?.mean !== undefined
-            ? Number(statResult.mean)
-            : 0,
-        sd: statResult?.sd !== undefined ? Number(statResult.sd) : 0,
-      }
-    }
+    const subscaleStats = Object.fromEntries(
+      subscaleRows.map((r) => [
+        r.subscale,
+        { mean: Number(r.mean ?? 0), sd: Number(r.sd ?? 0) },
+      ]),
+    ) as Record<SubscaleCode, { mean: number; sd: number }>
 
     return {
       studyId: data.studyId,

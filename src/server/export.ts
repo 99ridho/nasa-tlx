@@ -1,6 +1,6 @@
 'use server'
 import { createServerFn } from '@tanstack/react-start'
-import { eq } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { sessions, participants, tlxScores, subscaleRatings } from '#/db/schema'
 
@@ -40,14 +40,27 @@ export const getStudySessionsExport = createServerFn()
       .leftJoin(tlxScores, eq(sessions.id, tlxScores.sessionId))
       .where(eq(sessions.studyId, data.studyId))
 
+    // Bulk-fetch all ratings for completed sessions in one query
+    const sessionIds = completedSessions.map((r) => r.session.id)
+    const allRatings =
+      sessionIds.length > 0
+        ? await db
+            .select()
+            .from(subscaleRatings)
+            .where(inArray(subscaleRatings.sessionId, sessionIds))
+        : []
+
+    const ratingsBySession = new Map<string, typeof allRatings>()
+    for (const r of allRatings) {
+      const list = ratingsBySession.get(r.sessionId) ?? []
+      list.push(r)
+      ratingsBySession.set(r.sessionId, list)
+    }
+
     const rows: ExportRow[] = []
 
     for (const { session: s, participant: p, score } of completedSessions) {
-      // Fetch per-subscale ratings for this session
-      const ratings = await db
-        .select()
-        .from(subscaleRatings)
-        .where(eq(subscaleRatings.sessionId, s.id))
+      const ratings = ratingsBySession.get(s.id) ?? []
 
       const ratingMap: Partial<Record<string, number>> = {}
       for (const r of ratings) {

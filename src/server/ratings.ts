@@ -1,6 +1,6 @@
 'use server'
 import { createServerFn } from '@tanstack/react-start'
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { db } from '#/db/index'
 import { subscaleRatings } from '#/db/schema'
 import type {
@@ -15,45 +15,23 @@ export const submitSubscaleRating = createServerFn()
   .handler(async ({ data }): Promise<SubscaleRating> => {
     const rawValue = snapSliderValue(data.sliderPosition)
 
-    // Upsert: check if a rating already exists for this session + subscale
-    const existing = (
-      await db
-        .select()
-        .from(subscaleRatings)
-        .where(
-          and(
-            eq(subscaleRatings.sessionId, data.sessionId),
-            eq(subscaleRatings.subscale, data.subscale),
-          ),
-        )
-        .limit(1)
-    ).at(0)
-
-    let row: typeof subscaleRatings.$inferSelect
-
-    if (existing) {
-      const [updated] = await db
-        .update(subscaleRatings)
-        .set({
+    const [row] = await db
+      .insert(subscaleRatings)
+      .values({
+        sessionId: data.sessionId,
+        subscale: data.subscale,
+        rawValue,
+        sliderPosition: String(data.sliderPosition),
+      })
+      .onConflictDoUpdate({
+        target: [subscaleRatings.sessionId, subscaleRatings.subscale],
+        set: {
           rawValue,
           sliderPosition: String(data.sliderPosition),
           respondedAt: new Date(),
-        })
-        .where(eq(subscaleRatings.id, existing.id))
-        .returning()
-      row = updated
-    } else {
-      const [inserted] = await db
-        .insert(subscaleRatings)
-        .values({
-          sessionId: data.sessionId,
-          subscale: data.subscale,
-          rawValue,
-          sliderPosition: String(data.sliderPosition),
-        })
-        .returning()
-      row = inserted
-    }
+        },
+      })
+      .returning()
 
     return {
       id: row.id,
