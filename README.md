@@ -1,6 +1,6 @@
 # NASA-TLX
 
-A full-stack web application for conducting [NASA Task Load Index (NASA-TLX)](https://humansystems.arc.nasa.gov/groups/tlx/) cognitive workload studies. Supports multi-participant sessions, bilingual UI (English / Indonesian), and CSV data export.
+A full-stack web application for conducting [NASA Task Load Index (NASA-TLX)](https://www.nasa.gov/human-systems-integration-division/nasa-task-load-index-tlx/) cognitive workload studies. Supports multi-participant sessions, bilingual UI (English / Indonesian), and CSV data export.
 
 ## What it does
 
@@ -165,8 +165,8 @@ These are hard requirements from the original Hart & Staveland (1988) instrument
 
 - Exactly **15 pairwise pairs** — all C(6,2) combinations of the six subscales
 - Weights must sum to **exactly 15** (one point per pair)
-- Slider range **0–100**, increments of **5** only
 - **No numeric display** to participants during rating
+- The **5-point step resolution** (20 increments) follows the recommendation that **"the optimal range of rating steps is from 10 to 20"**
 
 ## Authoritative references
 

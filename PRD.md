@@ -278,7 +278,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SM-03: Edit Study
 
-**Status:** 🔲 Planned  
+**Status:** ✅ Done  
 **Description:** A researcher can edit an existing study's name, description, and task label.  
 **Source:** Design decision.  
 **Acceptance Criteria:**
@@ -291,7 +291,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SM-04: Delete Study
 
-**Status:** 🔲 Planned  
+**Status:** ✅ Done  
 **Description:** A researcher can delete a study and all its associated data.  
 **Source:** Design decision.  
 **Acceptance Criteria:**
@@ -337,7 +337,7 @@ Computed scores stored after session completion. One row per session.
 
 #### FR-SI-04: Batch Session Launch with Direct Participant Links
 
-**Status:** 🔲 Planned  
+**Status:** ✅ Done  
 **Description:** A researcher can launch sessions for multiple participants simultaneously and share each participant a direct URL they use to self-administer the instrument on their own device.  
 **Source:** Design decision.  
 **Acceptance Criteria:**
